@@ -11,7 +11,8 @@ import java.io.OutputStream;
  */
 public class Main {
 
-	public static void main(String[] args) {
+
+	public static void consoleMain(String[] args) {
 		try {
 			RepositoryManager manager = new RepositoryManager();
 

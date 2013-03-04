@@ -1,5 +1,7 @@
 package cz.zcu.kiv.eeg.owlimport;
 
+import cz.zcu.kiv.eeg.owlimport.model.source.AbstractSource;
+import cz.zcu.kiv.eeg.owlimport.model.source.SourceImportException;
 import org.openrdf.model.Graph;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
@@ -122,6 +124,17 @@ public class RepositoryManager {
 			throw new RepositoryManagerException(e);
 		} catch (RepositoryException e) {
 			throw new RepositoryManagerException(e);
+		}
+	}
+
+
+	public void importSource(AbstractSource source) throws SourceImportException {
+		try {
+			RepositoryWrapper repository = createRepository(source.getTitle());
+			source.importToRepository(repository);
+			source.attachRepository(repository);
+		} catch (RepositoryManagerException e) {
+			throw new SourceImportException("Error while importing source.", e);
 		}
 	}
 
