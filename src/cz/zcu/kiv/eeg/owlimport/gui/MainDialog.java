@@ -3,13 +3,20 @@ package cz.zcu.kiv.eeg.owlimport.gui;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import cz.zcu.kiv.eeg.owlimport.RepositoryManager;
+import cz.zcu.kiv.eeg.owlimport.gui.model.RuleListModel;
 import cz.zcu.kiv.eeg.owlimport.gui.model.SourceListModel;
+import cz.zcu.kiv.eeg.owlimport.model.ExportException;
+import cz.zcu.kiv.eeg.owlimport.model.Exporter;
 import cz.zcu.kiv.eeg.owlimport.model.SourceManager;
-import cz.zcu.kiv.eeg.owlimport.model.source.AbstractSource;
-import cz.zcu.kiv.eeg.owlimport.model.source.SourceImportException;
-import cz.zcu.kiv.eeg.owlimport.model.source.local.FileSourceFactory;
+import cz.zcu.kiv.eeg.owlimport.model.rules.AbstractRule;
+import cz.zcu.kiv.eeg.owlimport.model.rules.ExportTitleRule;
+import cz.zcu.kiv.eeg.owlimport.model.sources.AbstractSource;
+import cz.zcu.kiv.eeg.owlimport.model.sources.SourceImportException;
+import cz.zcu.kiv.eeg.owlimport.model.sources.local.FileSourceFactory;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,12 +31,17 @@ public class MainDialog {
 	private JToolBar mainToolbar;
 	private JButton importOWLButton;
 	private JButton exportButton;
+	private JButton addRuleButton;
 
 	private RepositoryManager repositoryManager;
 
 	private SourceManager sourceManager;
 
 	private SourceListModel sourcesModel;
+
+	private AbstractSource selectedSource;
+
+	private RuleListModel rulesModel;
 
 	public MainDialog(RepositoryManager repoManager, SourceManager srcManager) {
 		sourceManager = srcManager;
@@ -54,6 +66,74 @@ public class MainDialog {
 				}
 			}
 		});
+		sourceList.addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if (e.getValueIsAdjusting()) {
+					return;
+				}
+
+				ListSelectionModel model = sourceList.getSelectionModel();
+
+				if (rulesModel != null) {
+					rulesModel.detach();
+				}
+
+				int selected = getSelectedIndex(model, e.getFirstIndex(), e.getLastIndex());
+				if (selected >= 0) {
+					selectedSource = sourcesModel.getElementAt(selected);
+					rulesModel = new RuleListModel(selectedSource);
+					setRuleListModel(rulesModel);
+				} else {
+					selectedSource = null;
+					setRuleListModel(null);
+				}
+			}
+
+			private int getSelectedIndex(ListSelectionModel model, int min, int max) {
+				for (int i = min; i <= max; i++) {
+					if (model.isSelectedIndex(i)) {
+						return i;
+					}
+				}
+				return -1;
+			}
+		});
+		addRuleButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (selectedSource != null) {
+					selectedSource.addRule(new ExportTitleRule("Export Title"));
+				}
+			}
+		});
+		exportButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser();
+				chooser.setMultiSelectionEnabled(false);
+
+				if (chooser.showSaveDialog($$$getRootComponent$$$()) == JFileChooser.APPROVE_OPTION) {
+					Exporter export = new Exporter(chooser.getSelectedFile());
+					try {
+						export.openFile();
+
+						for (AbstractSource source : sourceManager.getSources()) {
+							export.writeSource(source);
+						}
+
+						export.closeFile();
+					} catch (ExportException ex) {
+
+					}
+				}
+			}
+		});
+	}
+
+	private void setRuleListModel(ListModel<AbstractRule> model) {
+		ruleList.setModel(model);
+		addRuleButton.setEnabled(model != null);
 	}
 
 	private void initSourceList() {
@@ -104,7 +184,7 @@ public class MainDialog {
 	 */
 	private void $$$setupUI$$$() {
 		rootPanel = new JPanel();
-		rootPanel.setLayout(new GridLayoutManager(2, 3, new Insets(0, 0, 0, 0), -1, -1));
+		rootPanel.setLayout(new GridLayoutManager(3, 3, new Insets(0, 0, 0, 0), -1, -1));
 		mainToolbar = new JToolBar();
 		mainToolbar.setFloatable(false);
 		mainToolbar.setMargin(new Insets(0, 3, 0, 0));
@@ -120,15 +200,23 @@ public class MainDialog {
 		exportButton.setText("Export");
 		mainToolbar.add(exportButton);
 		final JScrollPane scrollPane1 = new JScrollPane();
-		rootPanel.add(scrollPane1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(177, 128), null, 0, false));
+		rootPanel.add(scrollPane1, new GridConstraints(1, 0, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(177, 128), null, 0, false));
 		sourceList = new JList();
+		sourceList.setSelectionMode(0);
 		scrollPane1.setViewportView(sourceList);
 		final JScrollPane scrollPane2 = new JScrollPane();
-		rootPanel.add(scrollPane2, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(199, 128), null, 0, false));
+		rootPanel.add(scrollPane2, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(199, 128), null, 0, false));
 		ruleList = new JList();
+		ruleList.setSelectionMode(0);
 		scrollPane2.setViewportView(ruleList);
 		final JScrollPane scrollPane3 = new JScrollPane();
-		rootPanel.add(scrollPane3, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(500, 300), null, 0, false));
+		rootPanel.add(scrollPane3, new GridConstraints(1, 2, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(500, 300), null, 0, false));
+		final JToolBar toolBar1 = new JToolBar();
+		rootPanel.add(toolBar1, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 20), null, 0, false));
+		addRuleButton = new JButton();
+		addRuleButton.setEnabled(false);
+		addRuleButton.setText("Add Rule");
+		toolBar1.add(addRuleButton);
 	}
 
 	/**

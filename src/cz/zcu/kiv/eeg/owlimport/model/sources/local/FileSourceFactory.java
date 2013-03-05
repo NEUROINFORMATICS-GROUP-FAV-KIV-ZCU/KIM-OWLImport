@@ -1,10 +1,10 @@
-package cz.zcu.kiv.eeg.owlimport.model.source.local;
+package cz.zcu.kiv.eeg.owlimport.model.sources.local;
 
 import cz.zcu.kiv.eeg.owlimport.gui.ISourceParamsComponent;
-import cz.zcu.kiv.eeg.owlimport.gui.source.FileParamsComponent;
-import cz.zcu.kiv.eeg.owlimport.model.source.AbstractSource;
-import cz.zcu.kiv.eeg.owlimport.model.source.ISourceFactory;
-import cz.zcu.kiv.eeg.owlimport.model.source.ISourceParams;
+import cz.zcu.kiv.eeg.owlimport.gui.sources.FileParamsComponent;
+import cz.zcu.kiv.eeg.owlimport.model.sources.AbstractSource;
+import cz.zcu.kiv.eeg.owlimport.model.sources.ISourceFactory;
+import cz.zcu.kiv.eeg.owlimport.model.sources.ISourceParams;
 
 /**
  * @author Jan Smitka <jan@smitka.org>

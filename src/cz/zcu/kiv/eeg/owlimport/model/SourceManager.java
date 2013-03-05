@@ -1,7 +1,7 @@
 package cz.zcu.kiv.eeg.owlimport.model;
 
-import cz.zcu.kiv.eeg.owlimport.model.source.AbstractSource;
-import cz.zcu.kiv.eeg.owlimport.model.source.ISourceFactory;
+import cz.zcu.kiv.eeg.owlimport.model.sources.AbstractSource;
+import cz.zcu.kiv.eeg.owlimport.model.sources.ISourceFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -56,6 +56,11 @@ public class SourceManager {
 
 	public int getSourcesCount() {
 		return sources.size();
+	}
+
+
+	public List<AbstractSource> getSources() {
+		return sources;
 	}
 
 

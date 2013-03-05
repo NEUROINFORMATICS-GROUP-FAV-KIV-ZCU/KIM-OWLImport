@@ -1,11 +1,11 @@
-package cz.zcu.kiv.eeg.owlimport.model.source.local;
+package cz.zcu.kiv.eeg.owlimport.model.sources.local;
 
-import cz.zcu.kiv.eeg.owlimport.model.source.ISourceParams;
+import cz.zcu.kiv.eeg.owlimport.model.sources.ISourceParams;
 
 import java.io.File;
 
 /**
- * Parameters collection for local file source.
+ * Parameters collection for local file sources.
  *
  * @author Jan Smitka <jan@smitka.org>
  */
@@ -14,7 +14,7 @@ public class FileSourceParams implements ISourceParams {
 	private File file;
 
 	/**
-	 * Gets the reference of the source file.
+	 * Gets the reference of the sources file.
 	 * @return OWL file reference.
 	 */
 	public File getFile() {

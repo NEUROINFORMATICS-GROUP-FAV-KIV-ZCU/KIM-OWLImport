@@ -4,8 +4,8 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import cz.zcu.kiv.eeg.owlimport.model.SourceManager;
-import cz.zcu.kiv.eeg.owlimport.model.source.AbstractSource;
-import cz.zcu.kiv.eeg.owlimport.model.source.ISourceFactory;
+import cz.zcu.kiv.eeg.owlimport.model.sources.AbstractSource;
+import cz.zcu.kiv.eeg.owlimport.model.sources.ISourceFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -119,7 +119,7 @@ public class ImportSourceDialog extends InputDialog {
 
 	private void validateParams() throws ValidationException {
 		if (titleField.getText().length() == 0) {
-			throw new ValidationException("You have to enter source title.", titleField);
+			throw new ValidationException("You have to enter sources title.", titleField);
 		}
 		if (baseUrlField.getText().length() == 0) {
 			throw new ValidationException("You have to enter Base URL, it is required for correct repository setup.", baseUrlField);

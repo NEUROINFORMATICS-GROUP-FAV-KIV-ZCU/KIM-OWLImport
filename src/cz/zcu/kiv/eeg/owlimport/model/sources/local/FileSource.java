@@ -1,8 +1,8 @@
-package cz.zcu.kiv.eeg.owlimport.model.source.local;
+package cz.zcu.kiv.eeg.owlimport.model.sources.local;
 
 import cz.zcu.kiv.eeg.owlimport.RepositoryWrapper;
-import cz.zcu.kiv.eeg.owlimport.model.source.AbstractSource;
-import cz.zcu.kiv.eeg.owlimport.model.source.SourceImportException;
+import cz.zcu.kiv.eeg.owlimport.model.sources.AbstractSource;
+import cz.zcu.kiv.eeg.owlimport.model.sources.SourceImportException;
 
 import java.io.File;
 

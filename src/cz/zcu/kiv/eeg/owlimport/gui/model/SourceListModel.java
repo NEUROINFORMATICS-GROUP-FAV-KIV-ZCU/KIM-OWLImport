@@ -1,7 +1,7 @@
 package cz.zcu.kiv.eeg.owlimport.gui.model;
 
 import cz.zcu.kiv.eeg.owlimport.model.SourceManager;
-import cz.zcu.kiv.eeg.owlimport.model.source.AbstractSource;
+import cz.zcu.kiv.eeg.owlimport.model.sources.AbstractSource;
 
 import javax.swing.*;
 

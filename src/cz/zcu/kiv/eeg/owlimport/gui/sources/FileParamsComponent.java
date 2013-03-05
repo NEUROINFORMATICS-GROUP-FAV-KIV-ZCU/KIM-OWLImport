@@ -1,11 +1,11 @@
-package cz.zcu.kiv.eeg.owlimport.gui.source;
+package cz.zcu.kiv.eeg.owlimport.gui.sources;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import cz.zcu.kiv.eeg.owlimport.gui.ISourceParamsComponent;
 import cz.zcu.kiv.eeg.owlimport.gui.ValidationException;
-import cz.zcu.kiv.eeg.owlimport.model.source.local.FileSourceParams;
-import cz.zcu.kiv.eeg.owlimport.model.source.ISourceParams;
+import cz.zcu.kiv.eeg.owlimport.model.sources.local.FileSourceParams;
+import cz.zcu.kiv.eeg.owlimport.model.sources.ISourceParams;
 
 import javax.swing.*;
 import java.awt.*;
