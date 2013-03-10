@@ -48,9 +48,11 @@ public class ProjectWriter {
 	}
 
 	private void writeSources(XMLStreamWriter out, List<AbstractSource> sources) throws XMLStreamException {
+		out.writeStartElement(Elements.SOURCES);
 		for (AbstractSource source : sources) {
 			writeSource(out, source);
 		}
+		out.writeEndElement();
 	}
 
 	private void writeSource(XMLStreamWriter out, AbstractSource source) throws XMLStreamException {

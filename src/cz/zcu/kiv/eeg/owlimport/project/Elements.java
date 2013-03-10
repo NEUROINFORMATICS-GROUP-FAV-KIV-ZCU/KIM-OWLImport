@@ -5,6 +5,7 @@ package cz.zcu.kiv.eeg.owlimport.project;
  * @author Jan Smitka <jan@smitka.org>
  */
 public class Elements {
+	public static final String SOURCES = "sources";
 	public static final String SOURCE = "source";
 	public static final String SOURCE_TITLE = "title";
 	public static final String SOURCE_BASE_URI = "baseUri";
