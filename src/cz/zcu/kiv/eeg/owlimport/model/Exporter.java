@@ -1,6 +1,7 @@
 package cz.zcu.kiv.eeg.owlimport.model;
 
 import cz.zcu.kiv.eeg.owlimport.model.rules.AbstractRule;
+import cz.zcu.kiv.eeg.owlimport.model.rules.RuleExportException;
 import cz.zcu.kiv.eeg.owlimport.model.sources.AbstractSource;
 import org.openrdf.query.GraphQueryResult;
 import org.openrdf.query.QueryEvaluationException;
@@ -53,15 +54,16 @@ public class Exporter {
 		for (AbstractRule rule : source.getRules()) {
 			try {
 				writeRule(rule);
-			} catch (QueryEvaluationException e) {
-				// non-fatal error, rule will probably not be exported
+			} catch (QueryEvaluationException|RuleExportException e) {
+				// non-fatal error, one rule will probably not be exported
+				// shall be logged
 			} catch (RDFHandlerException e) {
 				throw exportException(e);
 			}
 		}
 	}
 
-	public void writeRule(AbstractRule rule) throws QueryEvaluationException, RDFHandlerException {
+	public void writeRule(AbstractRule rule) throws RuleExportException, QueryEvaluationException, RDFHandlerException {
 		writeStatements(rule.getStatements());
 	}
 

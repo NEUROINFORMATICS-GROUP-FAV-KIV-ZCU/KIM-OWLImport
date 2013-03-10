@@ -84,7 +84,16 @@
         </constraints>
         <properties/>
         <border type="none"/>
-        <children/>
+        <children>
+          <grid id="d2895" binding="ruleOptionsPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints/>
+            <properties/>
+            <border type="empty">
+              <size top="5" left="5" bottom="5" right="5"/>
+            </border>
+            <children/>
+          </grid>
+        </children>
       </scrollpane>
       <toolbar id="789fa">
         <constraints>

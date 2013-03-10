@@ -3,6 +3,8 @@ package cz.zcu.kiv.eeg.owlimport.model.sources;
 import cz.zcu.kiv.eeg.owlimport.RepositoryWrapper;
 import cz.zcu.kiv.eeg.owlimport.model.rules.AbstractRule;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +48,8 @@ public abstract class AbstractSource {
 	}
 
 	public abstract void importToRepository(RepositoryWrapper repository) throws SourceImportException;
+
+	public abstract void saveLocation(XMLStreamWriter writer) throws XMLStreamException;
 
 	public final void attachRepository(RepositoryWrapper repositoryWrapper) {
 		repository = repositoryWrapper;

@@ -6,6 +6,8 @@ import cz.zcu.kiv.eeg.owlimport.gui.ISourceParamsComponent;
  * @author Jan Smitka <jan@smitka.org>
  */
 public interface ISourceFactory {
+	public Class getCreatedClass();
+
 	public AbstractSource createSource(String title, String baseUrl, ISourceParams parameters);
 
 	public ISourceParamsComponent createGuiComponent();

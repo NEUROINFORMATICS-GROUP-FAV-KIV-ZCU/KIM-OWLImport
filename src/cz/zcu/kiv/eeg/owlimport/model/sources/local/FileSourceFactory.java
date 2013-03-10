@@ -12,6 +12,12 @@ import cz.zcu.kiv.eeg.owlimport.model.sources.ISourceParams;
 public class FileSourceFactory implements ISourceFactory {
 	private static final String FACTORY_TITLE = "Local File";
 
+
+	@Override
+	public Class getCreatedClass() {
+		return FileSource.class;
+	}
+
 	@Override
 	public AbstractSource createSource(String title, String baseUrl, ISourceParams parameters) {
 		if (!(parameters instanceof FileSourceParams)) {

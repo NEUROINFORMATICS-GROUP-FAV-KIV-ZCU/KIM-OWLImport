@@ -1,5 +1,8 @@
 package cz.zcu.kiv.eeg.owlimport;
 
+import org.openrdf.model.Literal;
+import org.openrdf.model.URI;
+import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.query.*;
 import org.openrdf.repository.Repository;
@@ -12,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jan Smitka <jan@smitka.org>
@@ -55,6 +59,13 @@ public class RepositoryWrapper {
 	private static final String PARAM_LABEL_PROP = "_labelProp";
 
 
+	private static final String SELECT_PROPERTIES_QUERY = "SELECT Prop " +
+			"FROM {Prop} rdf:type {PropType} WHERE PropType = owl:DatatypeProperty";
+
+
+	private List<String> propertiesList;
+
+
 	public RepositoryWrapper(Repository repo) throws RepositoryException {
 		repository = repo;
 		conn = repo.getConnection();
@@ -70,6 +81,12 @@ public class RepositoryWrapper {
 	public void importFile(File file, String baseUrl, String context) throws RepositoryException, RDFParseException, IOException {
 		conn.add(file, baseUrl, RDFFormat.forFileName(file.getName(), RDFFormat.RDFXML), valueFactory.createURI(context));
 		conn.commit();
+
+		cleanCache();
+	}
+
+	private void cleanCache() {
+		propertiesList = null;
 	}
 
 
@@ -86,6 +103,20 @@ public class RepositoryWrapper {
 		res.close();
 
 		return result;
+	}
+
+	public List<String> getAllProperties() throws MalformedQueryException, RepositoryException, QueryEvaluationException {
+		if (propertiesList == null) {
+			propertiesList = new LinkedList<>();
+			TupleQuery query = conn.prepareTupleQuery(QueryLanguage.SERQL, SELECT_PROPERTIES_QUERY);
+			TupleQueryResult res = query.evaluate();
+			while (res.hasNext()) {
+				BindingSet row = res.next();
+				propertiesList.add(row.getValue("Prop").stringValue());
+			}
+			res.close();
+		}
+		return propertiesList;
 	}
 
 
@@ -107,6 +138,19 @@ public class RepositoryWrapper {
 		return query.evaluate();
 	}
 
+	public GraphQueryResult executeGraphQuery(String query, Map<String, Value> params) throws QueryEvaluationException, MalformedQueryException, RepositoryException {
+		return executeGraphQuery(query, params, false);
+	}
+
+	public GraphQueryResult executeGraphQuery(String query, Map<String, Value> params, boolean includeInferred) throws QueryEvaluationException, MalformedQueryException, RepositoryException {
+		GraphQuery graphQuery = conn.prepareGraphQuery(QueryLanguage.SERQL, query);
+		graphQuery.setIncludeInferred(includeInferred);
+		for (Map.Entry<String, Value> param : params.entrySet()) {
+			graphQuery.setBinding(param.getKey(), param.getValue());
+		}
+		return graphQuery.evaluate();
+	}
+
 	public void close() throws RepositoryException {
 		conn.close();
 		repository.shutDown();
@@ -114,4 +158,19 @@ public class RepositoryWrapper {
 
 
 
+	public URI createUri(String uri) {
+		return valueFactory.createURI(uri);
+	}
+
+	public Literal createLiteral(String str) {
+		return valueFactory.createLiteral(str);
+	}
+
+	public Literal createLiteral(int num) {
+		return valueFactory.createLiteral(num);
+	}
+
+	public Literal createLiteral(long num) {
+		return valueFactory.createLiteral(num);
+	}
 }

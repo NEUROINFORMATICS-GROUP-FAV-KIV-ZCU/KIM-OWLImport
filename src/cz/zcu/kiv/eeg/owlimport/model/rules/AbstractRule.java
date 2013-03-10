@@ -1,6 +1,7 @@
 package cz.zcu.kiv.eeg.owlimport.model.rules;
 
 import cz.zcu.kiv.eeg.owlimport.RepositoryWrapper;
+import cz.zcu.kiv.eeg.owlimport.gui.IRuleParamsComponent;
 import cz.zcu.kiv.eeg.owlimport.model.sources.AbstractSource;
 import org.openrdf.query.GraphQueryResult;
 
@@ -12,16 +13,28 @@ public abstract class AbstractRule {
 
 	private final String title;
 
+	private IRuleParamsComponent guiComponent;
 
-	public AbstractRule(String ruleTitle) {
+
+	public AbstractRule(String ruleTitle, IRuleParams params) {
 		title = ruleTitle;
+
+		setRuleParams(params);
 	}
+
+	protected abstract void setRuleParams(IRuleParams params);
+
+	public abstract IRuleParams getRuleParams();
+
+	public abstract IRuleParamsComponent createGuiComponent();
+
+	public abstract GraphQueryResult getStatements() throws RuleExportException;
 
 	public final void setSource(AbstractSource src) {
 		source = src;
 	}
 
-	public final AbstractSource getSource() {
+	public final AbstractSource getSource() throws RuleExportException {
 		return source;
 	}
 
@@ -30,7 +43,14 @@ public abstract class AbstractRule {
 		return title;
 	}
 
-	public abstract GraphQueryResult getStatements();
+
+	public final IRuleParamsComponent getGuiComponent() {
+		if (guiComponent == null) {
+			guiComponent = createGuiComponent();
+		}
+		return guiComponent;
+	}
+
 
 	protected final RepositoryWrapper getRepository() {
 		return source.getRepository();

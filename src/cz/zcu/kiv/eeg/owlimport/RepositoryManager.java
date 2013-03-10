@@ -27,6 +27,8 @@ import java.util.List;
  * @author Jan Smitka <jan@smitka.org>
  */
 public class RepositoryManager {
+	private static final String REPOSITORIES_DIR = "repositories";
+
 	private static final String DEFAULT_NAMESPACE = "http://eeg.kiv.zcu.cz/#";
 	private static final String DEFAULT_CONFIG = "config/owlim.ttl";
 
@@ -149,6 +151,22 @@ public class RepositoryManager {
 			}
 		}
 		repositoryManager.shutDown();
+		cleanupFiles();
+	}
+
+
+	private void cleanupFiles() {
+		File repoDir = new File(REPOSITORIES_DIR);
+		deleteFile(repoDir);
+	}
+
+	private void deleteFile(File file) {
+		if (file.isDirectory()) {
+			for (File f : file.listFiles()) {
+				deleteFile(f);
+			}
+		}
+		file.delete();
 	}
 
 }

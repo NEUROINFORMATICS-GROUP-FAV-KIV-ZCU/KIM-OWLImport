@@ -7,19 +7,23 @@ import cz.zcu.kiv.eeg.owlimport.gui.model.RuleListModel;
 import cz.zcu.kiv.eeg.owlimport.gui.model.SourceListModel;
 import cz.zcu.kiv.eeg.owlimport.model.ExportException;
 import cz.zcu.kiv.eeg.owlimport.model.Exporter;
+import cz.zcu.kiv.eeg.owlimport.model.RuleManager;
 import cz.zcu.kiv.eeg.owlimport.model.SourceManager;
 import cz.zcu.kiv.eeg.owlimport.model.rules.AbstractRule;
-import cz.zcu.kiv.eeg.owlimport.model.rules.ExportTitleRule;
 import cz.zcu.kiv.eeg.owlimport.model.sources.AbstractSource;
+import cz.zcu.kiv.eeg.owlimport.model.sources.ISourceFactory;
 import cz.zcu.kiv.eeg.owlimport.model.sources.SourceImportException;
-import cz.zcu.kiv.eeg.owlimport.model.sources.local.FileSourceFactory;
+import cz.zcu.kiv.eeg.owlimport.model.sources.local.FileSourceParams;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
 
 /**
  * @author Jan Smitka <jan@smitka.org>
@@ -32,10 +36,13 @@ public class MainDialog {
 	private JButton importOWLButton;
 	private JButton exportButton;
 	private JButton addRuleButton;
+	private JPanel ruleOptionsPanel;
 
 	private RepositoryManager repositoryManager;
 
 	private SourceManager sourceManager;
+
+	private RuleManager ruleManager;
 
 	private SourceListModel sourcesModel;
 
@@ -43,9 +50,10 @@ public class MainDialog {
 
 	private RuleListModel rulesModel;
 
-	public MainDialog(RepositoryManager repoManager, SourceManager srcManager) {
+	public MainDialog(RepositoryManager repoManager, SourceManager srcManager, RuleManager rlManager) {
 		sourceManager = srcManager;
 		repositoryManager = repoManager;
+		ruleManager = rlManager;
 
 		initSourceList();
 
@@ -53,7 +61,7 @@ public class MainDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				ImportSourceDialog dialog = new ImportSourceDialog(MainDialog.this.sourceManager);
-				dialog.setVisible(true);
+				dialog.showInCenterOf($$$getRootComponent$$$());
 
 				if (dialog.getDialogResult() == DialogResult.OK) {
 					AbstractSource source = dialog.createSource();
@@ -66,47 +74,71 @@ public class MainDialog {
 				}
 			}
 		});
-		sourceList.addListSelectionListener(new ListSelectionListener() {
+		sourceList.addListSelectionListener(new ListSingleSelectionAdapter(sourceList) {
 			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				if (e.getValueIsAdjusting()) {
-					return;
-				}
-
-				ListSelectionModel model = sourceList.getSelectionModel();
-
+			public void selectionChanged(ListSelectionEvent e) {
 				if (rulesModel != null) {
 					rulesModel.detach();
 				}
-
-				int selected = getSelectedIndex(model, e.getFirstIndex(), e.getLastIndex());
-				if (selected >= 0) {
-					selectedSource = sourcesModel.getElementAt(selected);
-					rulesModel = new RuleListModel(selectedSource);
-					setRuleListModel(rulesModel);
-				} else {
-					selectedSource = null;
-					setRuleListModel(null);
-				}
 			}
 
-			private int getSelectedIndex(ListSelectionModel model, int min, int max) {
-				for (int i = min; i <= max; i++) {
-					if (model.isSelectedIndex(i)) {
-						return i;
-					}
-				}
-				return -1;
+			@Override
+			public void selectionSelected(int selectedIndex, ListSelectionEvent e) {
+				selectedSource = sourcesModel.getElementAt(selectedIndex);
+				rulesModel = new RuleListModel(selectedSource);
+				setRuleListModel(rulesModel);
+			}
+
+			@Override
+			public void selectionCanceled(ListSelectionEvent e) {
+				selectedSource = null;
+				setRuleListModel(null);
 			}
 		});
+
 		addRuleButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (selectedSource != null) {
-					selectedSource.addRule(new ExportTitleRule("Export Title"));
+				if (selectedSource == null) {
+					return;
+				}
+
+				AddRuleDialog dialog = new AddRuleDialog(ruleManager);
+				dialog.showInCenterOf($$$getRootComponent$$$());
+
+				if (dialog.getDialogResult() == DialogResult.OK) {
+					AbstractRule rule = dialog.createRule();
+					selectedSource.addRule(rule);
 				}
 			}
 		});
+
+
+		ruleList.addListSelectionListener(new ListSingleSelectionAdapter(ruleList) {
+			@Override
+			public void selectionSelected(int selectedIndex, ListSelectionEvent e) {
+				ruleOptionsPanel.removeAll();
+
+				AbstractRule rule = rulesModel.getElementAt(selectedIndex);
+				IRuleParamsComponent opt = rule.getGuiComponent();
+				JLabel title = new JLabel(rule.getTitle());
+				title.setBorder(new EmptyBorder(0, 0, 10, 0));
+				ruleOptionsPanel.add(title, BorderLayout.NORTH);
+				ruleOptionsPanel.add(opt.getPanel(), BorderLayout.CENTER);
+				opt.refresh();
+				ruleOptionsPanel.revalidate();
+				getFrame().pack();
+				getFrame().repaint();
+			}
+
+			@Override
+			public void selectionCanceled(ListSelectionEvent e) {
+				ruleOptionsPanel.removeAll();
+				ruleOptionsPanel.revalidate();
+				getFrame().repaint();
+			}
+		});
+
 		exportButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -129,6 +161,28 @@ public class MainDialog {
 				}
 			}
 		});
+
+
+		importEEGDatabaseOWL();
+	}
+
+
+	private JFrame getFrame() {
+		return (JFrame) rootPanel.getTopLevelAncestor();
+	}
+
+
+	private void importEEGDatabaseOWL() {
+		ISourceFactory localFileFactory = sourceManager.getSourceFactories().get(0);
+		FileSourceParams params = new FileSourceParams();
+		params.setFile(new File("D:\\eegdatabase.owl"));
+		AbstractSource source = localFileFactory.createSource("EEG OWL", "http://kiv.zcu.cz/eegbase#", params);
+		sourceManager.addSource(source);
+		try {
+			repositoryManager.importSource(source);
+		} catch (SourceImportException e) {
+			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+		}
 	}
 
 	private void setRuleListModel(ListModel<AbstractRule> model) {
@@ -141,22 +195,21 @@ public class MainDialog {
 		sourceList.setModel(sourcesModel);
 	}
 
-	public static void main(String[] args) {
+	public static void run(final RepositoryManager repoManager, final SourceManager srcManager, final RuleManager rlManager) {
 		initLookAndFeel();
 
-		try {
-			RepositoryManager repoManager = new RepositoryManager();
-			SourceManager srcManager = new SourceManager();
-			srcManager.registerSourceFactory(new FileSourceFactory());
+		JFrame frame = new JFrame("MainDialog");
+		frame.setContentPane(new MainDialog(repoManager, srcManager, rlManager).rootPanel);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.pack();
+		frame.setVisible(true);
 
-			JFrame frame = new JFrame("MainDialog");
-			frame.setContentPane(new MainDialog(repoManager, srcManager).rootPanel);
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			frame.pack();
-			frame.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				repoManager.close();
+			}
+		});
 	}
 
 	private static void initLookAndFeel() {
@@ -211,6 +264,10 @@ public class MainDialog {
 		scrollPane2.setViewportView(ruleList);
 		final JScrollPane scrollPane3 = new JScrollPane();
 		rootPanel.add(scrollPane3, new GridConstraints(1, 2, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(500, 300), null, 0, false));
+		ruleOptionsPanel = new JPanel();
+		ruleOptionsPanel.setLayout(new BorderLayout(0, 0));
+		scrollPane3.setViewportView(ruleOptionsPanel);
+		ruleOptionsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5), null));
 		final JToolBar toolBar1 = new JToolBar();
 		rootPanel.add(toolBar1, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 20), null, 0, false));
 		addRuleButton = new JButton();
