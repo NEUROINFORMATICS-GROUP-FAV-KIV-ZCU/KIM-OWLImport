@@ -10,6 +10,11 @@ public class ExportTitleRuleFactory implements IRuleFactory {
 	private static final String FACTORY_TITLE = "Export Title of Instances";
 
 	@Override
+	public Class getCreatedClass() {
+		return ExportTitleRule.class;
+	}
+
+	@Override
 	public AbstractRule createRule(String title) {
 		return new ExportTitleRule(title);
 	}

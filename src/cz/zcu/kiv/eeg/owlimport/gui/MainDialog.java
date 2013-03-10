@@ -14,6 +14,7 @@ import cz.zcu.kiv.eeg.owlimport.model.sources.AbstractSource;
 import cz.zcu.kiv.eeg.owlimport.model.sources.ISourceFactory;
 import cz.zcu.kiv.eeg.owlimport.model.sources.SourceImportException;
 import cz.zcu.kiv.eeg.owlimport.model.sources.local.FileSourceParams;
+import cz.zcu.kiv.eeg.owlimport.project.ProjectWriteException;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -37,6 +38,7 @@ public class MainDialog {
 	private JButton exportButton;
 	private JButton addRuleButton;
 	private JPanel ruleOptionsPanel;
+	private JButton saveProjectButton;
 
 	private RepositoryManager repositoryManager;
 
@@ -164,6 +166,23 @@ public class MainDialog {
 
 
 		importEEGDatabaseOWL();
+
+
+		saveProjectButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser();
+				chooser.setMultiSelectionEnabled(false);
+
+				if (chooser.showSaveDialog($$$getRootComponent$$$()) == JFileChooser.APPROVE_OPTION) {
+					try {
+						sourceManager.saveProject(chooser.getSelectedFile());
+					} catch (ProjectWriteException ex) {
+						// handle error
+					}
+				}
+			}
+		});
 	}
 
 
@@ -252,6 +271,11 @@ public class MainDialog {
 		exportButton = new JButton();
 		exportButton.setText("Export");
 		mainToolbar.add(exportButton);
+		final JToolBar.Separator toolBar$Separator2 = new JToolBar.Separator();
+		mainToolbar.add(toolBar$Separator2);
+		saveProjectButton = new JButton();
+		saveProjectButton.setText("Save Project");
+		mainToolbar.add(saveProjectButton);
 		final JScrollPane scrollPane1 = new JScrollPane();
 		rootPanel.add(scrollPane1, new GridConstraints(1, 0, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(177, 128), null, 0, false));
 		sourceList = new JList();

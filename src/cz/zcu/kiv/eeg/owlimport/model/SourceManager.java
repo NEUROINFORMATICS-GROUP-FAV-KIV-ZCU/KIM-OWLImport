@@ -2,7 +2,10 @@ package cz.zcu.kiv.eeg.owlimport.model;
 
 import cz.zcu.kiv.eeg.owlimport.model.sources.AbstractSource;
 import cz.zcu.kiv.eeg.owlimport.model.sources.ISourceFactory;
+import cz.zcu.kiv.eeg.owlimport.project.ProjectWriteException;
+import cz.zcu.kiv.eeg.owlimport.project.ProjectWriter;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -61,6 +64,11 @@ public class SourceManager {
 
 	public List<AbstractSource> getSources() {
 		return sources;
+	}
+
+	public void saveProject(File outputFile) throws ProjectWriteException {
+		ProjectWriter writer = new ProjectWriter(outputFile);
+		writer.save(sources);
 	}
 
 

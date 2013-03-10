@@ -5,6 +5,9 @@ import cz.zcu.kiv.eeg.owlimport.gui.IRuleParamsComponent;
 import cz.zcu.kiv.eeg.owlimport.model.sources.AbstractSource;
 import org.openrdf.query.GraphQueryResult;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 /**
  * @author Jan Smitka <jan@smitka.org>
  */
@@ -49,6 +52,11 @@ public abstract class AbstractRule {
 			guiComponent = createGuiComponent();
 		}
 		return guiComponent;
+	}
+
+
+	public final void saveParams(XMLStreamWriter writer) throws XMLStreamException {
+		getRuleParams().writeXml(writer);
 	}
 
 

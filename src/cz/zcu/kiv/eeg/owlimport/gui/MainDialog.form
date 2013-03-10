@@ -40,6 +40,16 @@
               <text value="Export"/>
             </properties>
           </component>
+          <component id="9ce77" class="javax.swing.JToolBar$Separator">
+            <constraints/>
+            <properties/>
+          </component>
+          <component id="a576e" class="javax.swing.JButton" binding="saveProjectButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <text value="Save Project"/>
+            </properties>
+          </component>
         </children>
       </toolbar>
       <scrollpane id="2c76c">
