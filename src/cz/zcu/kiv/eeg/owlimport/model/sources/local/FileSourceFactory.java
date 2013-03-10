@@ -6,6 +6,9 @@ import cz.zcu.kiv.eeg.owlimport.model.sources.AbstractSource;
 import cz.zcu.kiv.eeg.owlimport.model.sources.ISourceFactory;
 import cz.zcu.kiv.eeg.owlimport.model.sources.ISourceParams;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 /**
  * @author Jan Smitka <jan@smitka.org>
  */
@@ -36,6 +39,13 @@ public class FileSourceFactory implements ISourceFactory {
 	@Override
 	public ISourceParamsComponent createGuiComponent() {
 		return new FileParamsComponent();
+	}
+
+	@Override
+	public ISourceParams loadParams(XMLStreamReader reader) throws XMLStreamException {
+		FileSourceParams params = new FileSourceParams();
+		params.loadXml(reader);
+		return params;
 	}
 
 	@Override

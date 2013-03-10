@@ -24,4 +24,13 @@ public class RuleManager {
 	public List<IRuleFactory> getFactories() {
 		return factories;
 	}
+
+	public IRuleFactory getFactoryFor(String className) {
+		for (IRuleFactory factory : factories) {
+			if (factory.getCreatedClass().getName().equals(className)) {
+				return factory;
+			}
+		}
+		return null;
+	}
 }

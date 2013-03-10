@@ -22,6 +22,16 @@ public class SourceListModel extends AbstractListModel<AbstractSource> {
 			public void sourceAdded(AbstractSource source, int index) {
 				fireIntervalAdded(SourceListModel.this, index, index);
 			}
+
+			@Override
+			public void sourcesRemoved(int count) {
+				fireIntervalRemoved(SourceListModel.this, 0, count - 1);
+			}
+
+			@Override
+			public void sourcesLoaded(int count) {
+				fireIntervalAdded(SourceListModel.this, 0, count - 1);
+			}
 		});
 	}
 

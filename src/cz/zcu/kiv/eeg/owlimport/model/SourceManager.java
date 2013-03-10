@@ -1,7 +1,11 @@
 package cz.zcu.kiv.eeg.owlimport.model;
 
+import cz.zcu.kiv.eeg.owlimport.RepositoryManager;
 import cz.zcu.kiv.eeg.owlimport.model.sources.AbstractSource;
 import cz.zcu.kiv.eeg.owlimport.model.sources.ISourceFactory;
+import cz.zcu.kiv.eeg.owlimport.model.sources.SourceImportException;
+import cz.zcu.kiv.eeg.owlimport.project.ProjectReadException;
+import cz.zcu.kiv.eeg.owlimport.project.ProjectReader;
 import cz.zcu.kiv.eeg.owlimport.project.ProjectWriteException;
 import cz.zcu.kiv.eeg.owlimport.project.ProjectWriter;
 
@@ -42,6 +46,15 @@ public class SourceManager {
 		return sourceFactories;
 	}
 
+	public ISourceFactory getFactoryFor(String className) {
+		for (ISourceFactory factory : sourceFactories) {
+			if (factory.getCreatedClass().getName().equals(className)) {
+				return factory;
+			}
+		}
+		return null;
+	}
+
 
 	public void addSource(AbstractSource source) {
 		int newIndex = sources.size();
@@ -66,6 +79,26 @@ public class SourceManager {
 		return sources;
 	}
 
+	public void loadProject(File inputFile, RuleManager rlManager) throws ProjectReadException {
+		ProjectReader reader = new ProjectReader(this, rlManager, inputFile);
+
+		if (listener != null && !sources.isEmpty()) {
+			listener.sourcesRemoved(sources.size());
+		}
+		sources = reader.load();
+		if (listener != null && !sources.isEmpty()) {
+			listener.sourcesLoaded(sources.size());
+		}
+	}
+
+	public void importSources(RepositoryManager repositoryManager) throws SourceImportException {
+		for (AbstractSource source : sources) {
+			if (!source.hasRepositoryAttached()) {
+				repositoryManager.importSource(source);
+			}
+		}
+	}
+
 	public void saveProject(File outputFile) throws ProjectWriteException {
 		ProjectWriter writer = new ProjectWriter(outputFile);
 		writer.save(sources);
@@ -75,5 +108,9 @@ public class SourceManager {
 
 	public interface SourcesListener {
 		public void sourceAdded(AbstractSource source, int index);
+
+		public void sourcesRemoved(int count);
+
+		public void sourcesLoaded(int count);
 	}
 }

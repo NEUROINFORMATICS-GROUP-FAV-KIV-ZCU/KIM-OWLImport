@@ -25,7 +25,7 @@ public abstract class AbstractRule {
 		setRuleParams(params);
 	}
 
-	protected abstract void setRuleParams(IRuleParams params);
+	public abstract void setRuleParams(IRuleParams params);
 
 	public abstract IRuleParams getRuleParams();
 
@@ -56,7 +56,7 @@ public abstract class AbstractRule {
 
 
 	public final void saveParams(XMLStreamWriter writer) throws XMLStreamException {
-		getRuleParams().writeXml(writer);
+		getRuleParams().saveXml(writer);
 	}
 
 

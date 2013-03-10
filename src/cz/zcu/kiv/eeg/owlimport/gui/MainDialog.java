@@ -11,9 +11,8 @@ import cz.zcu.kiv.eeg.owlimport.model.RuleManager;
 import cz.zcu.kiv.eeg.owlimport.model.SourceManager;
 import cz.zcu.kiv.eeg.owlimport.model.rules.AbstractRule;
 import cz.zcu.kiv.eeg.owlimport.model.sources.AbstractSource;
-import cz.zcu.kiv.eeg.owlimport.model.sources.ISourceFactory;
 import cz.zcu.kiv.eeg.owlimport.model.sources.SourceImportException;
-import cz.zcu.kiv.eeg.owlimport.model.sources.local.FileSourceParams;
+import cz.zcu.kiv.eeg.owlimport.project.ProjectReadException;
 import cz.zcu.kiv.eeg.owlimport.project.ProjectWriteException;
 
 import javax.swing.*;
@@ -39,6 +38,7 @@ public class MainDialog {
 	private JButton addRuleButton;
 	private JPanel ruleOptionsPanel;
 	private JButton saveProjectButton;
+	private JButton loadProjectButton;
 
 	private RepositoryManager repositoryManager;
 
@@ -183,6 +183,21 @@ public class MainDialog {
 				}
 			}
 		});
+		loadProjectButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser();
+				chooser.setMultiSelectionEnabled(false);
+
+				if (chooser.showOpenDialog($$$getRootComponent$$$()) == JFileChooser.APPROVE_OPTION) {
+					try {
+						sourceManager.loadProject(chooser.getSelectedFile(), ruleManager);
+					} catch (ProjectReadException ex) {
+						// handle error
+					}
+				}
+			}
+		});
 	}
 
 
@@ -192,13 +207,11 @@ public class MainDialog {
 
 
 	private void importEEGDatabaseOWL() {
-		ISourceFactory localFileFactory = sourceManager.getSourceFactories().get(0);
-		FileSourceParams params = new FileSourceParams();
-		params.setFile(new File("D:\\eegdatabase.owl"));
-		AbstractSource source = localFileFactory.createSource("EEG OWL", "http://kiv.zcu.cz/eegbase#", params);
-		sourceManager.addSource(source);
 		try {
-			repositoryManager.importSource(source);
+			sourceManager.loadProject(new File("E:\\test.xml"), ruleManager);
+			sourceManager.importSources(repositoryManager);
+		} catch (ProjectReadException e) {
+			e.printStackTrace();
 		} catch (SourceImportException e) {
 			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 		}
@@ -263,6 +276,9 @@ public class MainDialog {
 		mainToolbar.setRollover(true);
 		mainToolbar.putClientProperty("JToolBar.isRollover", Boolean.TRUE);
 		rootPanel.add(mainToolbar, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 20), null, 0, false));
+		loadProjectButton = new JButton();
+		loadProjectButton.setText("Load Project");
+		mainToolbar.add(loadProjectButton);
 		importOWLButton = new JButton();
 		importOWLButton.setText("Import OWL");
 		mainToolbar.add(importOWLButton);

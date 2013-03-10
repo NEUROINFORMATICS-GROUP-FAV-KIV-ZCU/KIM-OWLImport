@@ -55,6 +55,10 @@ public abstract class AbstractSource {
 		repository = repositoryWrapper;
 	}
 
+	public final boolean hasRepositoryAttached() {
+		return (repository != null);
+	}
+
 	public final RepositoryWrapper getRepository() {
 		return repository;
 	}

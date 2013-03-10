@@ -24,6 +24,12 @@
         </clientProperties>
         <border type="none"/>
         <children>
+          <component id="2e8c2" class="javax.swing.JButton" binding="loadProjectButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <text value="Load Project"/>
+            </properties>
+          </component>
           <component id="9922e" class="javax.swing.JButton" binding="importOWLButton" default-binding="true">
             <constraints/>
             <properties>

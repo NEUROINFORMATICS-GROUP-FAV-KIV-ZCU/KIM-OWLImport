@@ -26,7 +26,7 @@ public class ExportTitleRule extends AbstractRule {
 	}
 
 	@Override
-	protected void setRuleParams(IRuleParams ruleParams) {
+	public void setRuleParams(IRuleParams ruleParams) {
 		params = (ExportTitleParams) ruleParams;
 	}
 
