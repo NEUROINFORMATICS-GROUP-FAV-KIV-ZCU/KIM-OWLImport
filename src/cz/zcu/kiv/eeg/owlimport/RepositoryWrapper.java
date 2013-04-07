@@ -13,6 +13,7 @@ import org.openrdf.rio.RDFParseException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,8 @@ public class RepositoryWrapper {
 	private RepositoryConnection conn;
 
 	private ValueFactory valueFactory;
+
+	private String context;
 
 	private static final String PARAM_CONTEXT = "_context";
 
@@ -73,6 +76,10 @@ public class RepositoryWrapper {
 		valueFactory = repo.getValueFactory();
 	}
 
+	public String getContext() {
+		return context;
+	}
+
 	public void importFile(File file, String baseUrl) throws RepositoryException, RDFParseException, IOException {
 		importFile(file, baseUrl, baseUrl);
 	}
@@ -81,7 +88,7 @@ public class RepositoryWrapper {
 	public void importFile(File file, String baseUrl, String context) throws RepositoryException, RDFParseException, IOException {
 		conn.add(file, baseUrl, RDFFormat.forFileName(file.getName(), RDFFormat.RDFXML), valueFactory.createURI(context));
 		conn.commit();
-
+		this.context = context;
 		cleanCache();
 	}
 
@@ -136,6 +143,10 @@ public class RepositoryWrapper {
 		query.setBinding(PARAM_CONTEXT, valueFactory.createURI(context));
 		query.setBinding(PARAM_LABEL_PROP, valueFactory.createURI(labelProperty));
 		return query.evaluate();
+	}
+
+	public GraphQueryResult executeGraphQuery(String query) throws QueryEvaluationException, MalformedQueryException, RepositoryException {
+		return executeGraphQuery(query, new HashMap<String, Value>(), false);
 	}
 
 	public GraphQueryResult executeGraphQuery(String query, Map<String, Value> params) throws QueryEvaluationException, MalformedQueryException, RepositoryException {

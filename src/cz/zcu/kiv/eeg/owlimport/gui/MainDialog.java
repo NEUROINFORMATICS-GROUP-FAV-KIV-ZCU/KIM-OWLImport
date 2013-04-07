@@ -165,7 +165,7 @@ public class MainDialog {
 		});
 
 
-		importEEGDatabaseOWL();
+		//importEEGDatabaseOWL();
 
 
 		saveProjectButton.addActionListener(new ActionListener() {
