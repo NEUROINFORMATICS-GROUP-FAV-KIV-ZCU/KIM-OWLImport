@@ -192,7 +192,10 @@ public class MainDialog {
 				if (chooser.showOpenDialog($$$getRootComponent$$$()) == JFileChooser.APPROVE_OPTION) {
 					try {
 						sourceManager.loadProject(chooser.getSelectedFile(), ruleManager);
+						sourceManager.importSources(repositoryManager);
 					} catch (ProjectReadException ex) {
+						// handle error
+					} catch (SourceImportException ex) {
 						// handle error
 					}
 				}
