@@ -23,7 +23,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
 
 /**
  * @author Jan Smitka <jan@smitka.org>
@@ -206,18 +205,6 @@ public class MainDialog {
 
 	private JFrame getFrame() {
 		return (JFrame) rootPanel.getTopLevelAncestor();
-	}
-
-
-	private void importEEGDatabaseOWL() {
-		try {
-			sourceManager.loadProject(new File("E:\\test.xml"), ruleManager);
-			sourceManager.importSources(repositoryManager);
-		} catch (ProjectReadException e) {
-			e.printStackTrace();
-		} catch (SourceImportException e) {
-			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-		}
 	}
 
 	private void setRuleListModel(ListModel<AbstractRule> model) {

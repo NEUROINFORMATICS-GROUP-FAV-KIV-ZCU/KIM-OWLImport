@@ -3,10 +3,7 @@ package cz.zcu.kiv.eeg.owlimport;
 import cz.zcu.kiv.eeg.owlimport.gui.MainDialog;
 import cz.zcu.kiv.eeg.owlimport.model.RuleManager;
 import cz.zcu.kiv.eeg.owlimport.model.SourceManager;
-import cz.zcu.kiv.eeg.owlimport.model.rules.export.ExportClassesRuleFactory;
-import cz.zcu.kiv.eeg.owlimport.model.rules.export.ExportTitleRuleFactory;
-import cz.zcu.kiv.eeg.owlimport.model.rules.export.ProtonAlignRuleFactory;
-import cz.zcu.kiv.eeg.owlimport.model.rules.export.TrustedSourceRuleFactory;
+import cz.zcu.kiv.eeg.owlimport.model.rules.export.*;
 import cz.zcu.kiv.eeg.owlimport.model.sources.local.FileSourceFactory;
 
 /**
@@ -44,6 +41,7 @@ public class Main {
 		rlManager.registerFactory(new ExportClassesRuleFactory());
 		rlManager.registerFactory(new ProtonAlignRuleFactory());
 		rlManager.registerFactory(new TrustedSourceRuleFactory());
+		rlManager.registerFactory(new ExportInstancesRuleFactory());
 		return rlManager;
 	}
 }
