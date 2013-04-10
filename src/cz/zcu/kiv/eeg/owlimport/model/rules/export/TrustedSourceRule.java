@@ -12,6 +12,7 @@ import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.GraphImpl;
 import org.openrdf.query.QueryEvaluationException;
 
+import java.text.Normalizer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +23,7 @@ public class TrustedSourceRule extends AbstractEmptyParamsRule {
 	private static final String RDF_TYPE_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 	private static final String TRUSTED_SOURCE_CLASS_URI = "http://proton.semanticweb.org/2006/05/protons#Trusted";
 
-	private static final String SOURCE_BASE_URI = "http://kiv.zcu.cz/eeg/KIM";
+	private static final String SOURCE_BASE_URI = "http://kiv.zcu.cz/eeg/KIM/sources";
 
 	private static final String ENTITIES_QUERY =
 			"CONSTRUCT {Entity} <http://proton.semanticweb.org/2006/05/protons#generatedBy> {_sourceUri} " +
@@ -61,6 +62,12 @@ public class TrustedSourceRule extends AbstractEmptyParamsRule {
 
 
 	private String createUriPart(String title) {
-		return title;
+		String noAccents = removeAccents(title);
+		return noAccents.replaceAll("[^A-Za-z0-9_\\.-]", "-").replaceAll("-{2,}", "-");
+	}
+
+
+	private String removeAccents(String str) {
+		return Normalizer.normalize(str, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
 	}
 }
