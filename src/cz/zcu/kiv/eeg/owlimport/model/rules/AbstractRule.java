@@ -3,7 +3,8 @@ package cz.zcu.kiv.eeg.owlimport.model.rules;
 import cz.zcu.kiv.eeg.owlimport.RepositoryWrapper;
 import cz.zcu.kiv.eeg.owlimport.gui.IRuleParamsComponent;
 import cz.zcu.kiv.eeg.owlimport.model.sources.AbstractSource;
-import org.openrdf.query.GraphQueryResult;
+import info.aduna.iteration.Iteration;
+import org.openrdf.model.Statement;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -31,7 +32,7 @@ public abstract class AbstractRule {
 
 	public abstract IRuleParamsComponent createGuiComponent();
 
-	public abstract GraphQueryResult getStatements() throws RuleExportException;
+	public abstract Iteration<Statement, ? extends Exception> getStatements() throws RuleExportException;
 
 	public final void setSource(AbstractSource src) {
 		source = src;

@@ -3,8 +3,10 @@ package cz.zcu.kiv.eeg.owlimport.model;
 import cz.zcu.kiv.eeg.owlimport.model.rules.AbstractRule;
 import cz.zcu.kiv.eeg.owlimport.model.rules.RuleExportException;
 import cz.zcu.kiv.eeg.owlimport.model.sources.AbstractSource;
+import info.aduna.iteration.CloseableIteration;
+import info.aduna.iteration.Iteration;
+import org.openrdf.model.Statement;
 import org.openrdf.query.GraphQueryResult;
-import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFWriter;
@@ -30,7 +32,7 @@ public class Exporter {
 
 
 	private ExportException exportException(Throwable cause) {
-		return new ExportException("An error occurred while exporting the source.", cause);
+		return new ExportException("An error occurred while exporting one of the sources. The resulting file might be incomplete.", cause);
 	}
 
 
@@ -54,29 +56,39 @@ public class Exporter {
 		for (AbstractRule rule : source.getRules()) {
 			try {
 				writeRule(rule);
-			} catch (QueryEvaluationException|RuleExportException e) {
-				// non-fatal error, one rule will probably not be exported
-				// shall be logged
-			} catch (RDFHandlerException e) {
+			} catch (RuleExportException|RDFHandlerException e) {
 				throw exportException(e);
 			}
 		}
 	}
 
-	public void writeRule(AbstractRule rule) throws RuleExportException, QueryEvaluationException, RDFHandlerException {
+	public void writeRule(AbstractRule rule) throws RuleExportException, RDFHandlerException {
 		writeStatements(rule.getStatements());
 	}
 
 
-	public void writeStatements(GraphQueryResult result) throws QueryEvaluationException, RDFHandlerException {
-		for (Map.Entry<String, String> nsEntry : result.getNamespaces().entrySet()) {
-			rdfWriter.handleNamespace(nsEntry.getKey(), nsEntry.getValue());
-		}
+	public void writeStatements(Iteration<Statement, ? extends Exception> result) throws RuleExportException, RDFHandlerException {
+		try {
+			if (result instanceof GraphQueryResult) {
+				for (Map.Entry<String, String> nsEntry : ((GraphQueryResult)result).getNamespaces().entrySet()) {
+					rdfWriter.handleNamespace(nsEntry.getKey(), nsEntry.getValue());
+				}
+			}
 
-		while (result.hasNext()) {
-			rdfWriter.handleStatement(result.next());
+			while (result.hasNext()) {
+				rdfWriter.handleStatement(result.next());
+			}
+
+			try {
+				if (result instanceof CloseableIteration) {
+					((CloseableIteration)result).close();
+				}
+			} catch (Exception e) {
+				// result could not be closed, considered non-fatal
+			}
+		} catch (Exception e) {
+			throw new RuleExportException("Error while exporting rule.", e);
 		}
-		result.close();
 	}
 
 

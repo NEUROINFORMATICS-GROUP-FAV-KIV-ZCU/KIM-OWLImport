@@ -6,20 +6,19 @@ import cz.zcu.kiv.eeg.owlimport.model.rules.AbstractRule;
 /**
  * @author Jan Smitka <jan@smitka.org>
  */
-public class ExportClassesRuleFactory extends AbstractEmptyParamsRuleFactory {
+public class TrustedSourceRuleFactory extends AbstractEmptyParamsRuleFactory {
 	@Override
 	public Class getCreatedClass() {
-		return ExportClassesRule.class;
+		return TrustedSourceRule.class;
 	}
 
 	@Override
 	public AbstractRule createRule(String title) {
-		return new ExportClassesRule(title);
+		return new TrustedSourceRule(title);
 	}
-
 
 	@Override
 	public String toString() {
-		return "Export All Classes";
+		return "Generate Trusted Source for All Entities";
 	}
 }
