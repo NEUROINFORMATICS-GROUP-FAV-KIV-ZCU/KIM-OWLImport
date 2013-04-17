@@ -1,6 +1,6 @@
 package cz.zcu.kiv.eeg.owlimport.model.rules.export;
 
-import cz.zcu.kiv.eeg.owlimport.RepositoryWrapper;
+import cz.zcu.kiv.eeg.owlimport.repository.RepositoryWrapper;
 import cz.zcu.kiv.eeg.owlimport.model.rules.AbstractEmptyParamsRule;
 import cz.zcu.kiv.eeg.owlimport.model.rules.RuleExportException;
 import info.aduna.iteration.Iteration;

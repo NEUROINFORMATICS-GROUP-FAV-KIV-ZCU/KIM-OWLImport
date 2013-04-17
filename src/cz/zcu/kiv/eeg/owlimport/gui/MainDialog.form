@@ -27,13 +27,8 @@
           <component id="2e8c2" class="javax.swing.JButton" binding="loadProjectButton" default-binding="true">
             <constraints/>
             <properties>
+              <icon value="cz/zcu/kiv/eeg/owlimport/gui/icons/open.png"/>
               <text value="Load Project"/>
-            </properties>
-          </component>
-          <component id="9922e" class="javax.swing.JButton" binding="importOWLButton" default-binding="true">
-            <constraints/>
-            <properties>
-              <text value="Import OWL"/>
             </properties>
           </component>
           <component id="89d9a" class="javax.swing.JToolBar$Separator">
@@ -43,6 +38,7 @@
           <component id="acb3c" class="javax.swing.JButton" binding="exportButton" default-binding="true">
             <constraints/>
             <properties>
+              <icon value="cz/zcu/kiv/eeg/owlimport/gui/icons/export.png"/>
               <text value="Export"/>
             </properties>
           </component>
@@ -50,9 +46,21 @@
             <constraints/>
             <properties/>
           </component>
+          <component id="18aaa" class="javax.swing.JButton" binding="generateVisiblityButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <icon value="cz/zcu/kiv/eeg/owlimport/gui/icons/visibility.png"/>
+              <text value="Generate Visiblity"/>
+            </properties>
+          </component>
+          <component id="7c4" class="javax.swing.JToolBar$Separator">
+            <constraints/>
+            <properties/>
+          </component>
           <component id="a576e" class="javax.swing.JButton" binding="saveProjectButton" default-binding="true">
             <constraints/>
             <properties>
+              <icon value="cz/zcu/kiv/eeg/owlimport/gui/icons/save.png"/>
               <text value="Save Project"/>
             </properties>
           </component>
@@ -60,7 +68,7 @@
       </toolbar>
       <scrollpane id="2c76c">
         <constraints>
-          <grid row="1" column="0" row-span="2" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="177" height="128"/>
           </grid>
         </constraints>
@@ -87,6 +95,7 @@
           <component id="a17aa" class="javax.swing.JList" binding="ruleList">
             <constraints/>
             <properties>
+              <model/>
               <selectionMode value="0"/>
             </properties>
           </component>
@@ -117,14 +126,37 @@
             <preferred-size width="-1" height="20"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <floatable value="false"/>
+        </properties>
         <border type="none"/>
         <children>
           <component id="32929" class="javax.swing.JButton" binding="addRuleButton" default-binding="true">
             <constraints/>
             <properties>
               <enabled value="false"/>
+              <icon value="cz/zcu/kiv/eeg/owlimport/gui/icons/add.png"/>
               <text value="Add Rule"/>
+            </properties>
+          </component>
+        </children>
+      </toolbar>
+      <toolbar id="29203">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="-1" height="20"/>
+          </grid>
+        </constraints>
+        <properties>
+          <floatable value="false"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <component id="9922e" class="javax.swing.JButton" binding="importOWLButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <icon value="cz/zcu/kiv/eeg/owlimport/gui/icons/add.png"/>
+              <text value="Import OWL"/>
             </properties>
           </component>
         </children>

@@ -1,6 +1,6 @@
 package cz.zcu.kiv.eeg.owlimport.model.rules;
 
-import cz.zcu.kiv.eeg.owlimport.RepositoryWrapper;
+import cz.zcu.kiv.eeg.owlimport.repository.RepositoryWrapper;
 import cz.zcu.kiv.eeg.owlimport.gui.IRuleParamsComponent;
 import cz.zcu.kiv.eeg.owlimport.model.sources.AbstractSource;
 import info.aduna.iteration.Iteration;

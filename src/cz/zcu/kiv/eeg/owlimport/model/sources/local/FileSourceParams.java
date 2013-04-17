@@ -14,7 +14,7 @@ import java.io.File;
  * @author Jan Smitka <jan@smitka.org>
  */
 public class FileSourceParams implements ISourceParams {
-	private static final String EL_FILE = "file";
+	public static final String EL_FILE = "file";
 
 	/** Locally stored file. */
 	private File file;

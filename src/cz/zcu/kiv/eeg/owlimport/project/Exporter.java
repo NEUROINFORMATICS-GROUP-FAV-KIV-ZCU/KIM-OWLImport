@@ -1,4 +1,4 @@
-package cz.zcu.kiv.eeg.owlimport.model;
+package cz.zcu.kiv.eeg.owlimport.project;
 
 import cz.zcu.kiv.eeg.owlimport.model.rules.AbstractRule;
 import cz.zcu.kiv.eeg.owlimport.model.rules.RuleExportException;
@@ -13,6 +13,7 @@ import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.Rio;
 
 import java.io.*;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,24 +36,32 @@ public class Exporter {
 		return new ExportException("An error occurred while exporting one of the sources. The resulting file might be incomplete.", cause);
 	}
 
+	public void writeSources(List<AbstractSource> sources) throws ExportException {
+		openFile();
+		for (AbstractSource source : sources) {
+			writeSource(source);
+		}
+		closeFile();
+	}
 
-	public void openFile() throws ExportException {
+
+	private void openFile() throws ExportException {
 		try {
 			outputStream = createStream();
-			rdfWriter = Rio.createWriter(RDFFormat.N3, outputStream);
+			rdfWriter = Rio.createWriter(RDFFormat.TURTLE, outputStream);
 			rdfWriter.startRDF();
 		} catch (Exception e) {
 			throw exportException(e);
 		}
 	}
 
-	public OutputStream createStream() throws IOException {
+	private OutputStream createStream() throws IOException {
 		FileOutputStream fileStream = new FileOutputStream(outputFile);
 		return new BufferedOutputStream(fileStream);
 	}
 
 
-	public void writeSource(AbstractSource source) throws ExportException {
+	private void writeSource(AbstractSource source) throws ExportException {
 		for (AbstractRule rule : source.getRules()) {
 			try {
 				writeRule(rule);
@@ -62,12 +71,12 @@ public class Exporter {
 		}
 	}
 
-	public void writeRule(AbstractRule rule) throws RuleExportException, RDFHandlerException {
+	private void writeRule(AbstractRule rule) throws RuleExportException, RDFHandlerException {
 		writeStatements(rule.getStatements());
 	}
 
 
-	public void writeStatements(Iteration<Statement, ? extends Exception> result) throws RuleExportException, RDFHandlerException {
+	private void writeStatements(Iteration<Statement, ? extends Exception> result) throws RuleExportException, RDFHandlerException {
 		try {
 			if (result instanceof GraphQueryResult) {
 				for (Map.Entry<String, String> nsEntry : ((GraphQueryResult)result).getNamespaces().entrySet()) {
@@ -93,7 +102,7 @@ public class Exporter {
 
 
 
-	public void closeFile() throws ExportException {
+	private void closeFile() throws ExportException {
 		try {
 			rdfWriter.endRDF();
 			outputStream.close();

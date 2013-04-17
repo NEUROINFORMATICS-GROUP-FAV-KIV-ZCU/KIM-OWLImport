@@ -1,4 +1,4 @@
-package cz.zcu.kiv.eeg.owlimport;
+package cz.zcu.kiv.eeg.owlimport.repository;
 
 import org.openrdf.model.Literal;
 import org.openrdf.model.URI;
@@ -13,6 +13,7 @@ import org.openrdf.rio.RDFParseException;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,22 +47,6 @@ public class RepositoryWrapper {
 
 	private String context;
 
-	private static final String PARAM_CONTEXT = "_context";
-
-	private static final String CLASS_QUERY =
-			"SELECT C FROM CONTEXT _context {C} rdf:type {rdfs:Class} " +
-					"WHERE namespace(C) = _n ";
-	private static final String PARAM_NAMESPACE = "_n";
-
-	private static final String EXPORT_INSTANCES_QUERY =
-			"CONSTRUCT {Entity} rdf:type {Type}; rdf:label {Title} " +
-					"FROM CONTEXT _context {Entity} sesame:directType {Type}; _labelProp {Title}";
-
-	private static final String EXPORT_INSTANCES_OF_TYPE_QUERY = EXPORT_INSTANCES_QUERY + " WHERE Type = _type";
-	private static final String PARAM_TYPE = "_type";
-	private static final String PARAM_LABEL_PROP = "_labelProp";
-
-
 	private static final String SELECT_PROPERTIES_QUERY = "SELECT Prop " +
 			"FROM {Prop} rdf:type {PropType} WHERE PropType = owl:DatatypeProperty";
 
@@ -92,25 +77,22 @@ public class RepositoryWrapper {
 		cleanCache();
 	}
 
+	public void importUrl(String owlUrl, String baseUrl) throws IOException, RepositoryException, RDFParseException {
+		importUrl(owlUrl, baseUrl, baseUrl);
+	}
+
+	public void importUrl(String owlUrl, String baseUrl, String context) throws IOException, RepositoryException, RDFParseException {
+		URL url = new URL(owlUrl);
+		conn.add(url, baseUrl, RDFFormat.forFileName(url.getFile(), RDFFormat.RDFXML), valueFactory.createURI(context));
+		conn.commit();
+		this.context = context;
+		cleanCache();
+	}
+
 	private void cleanCache() {
 		propertiesList = null;
 	}
 
-
-	public List<String> getAllClasses(String context, String namespace) throws MalformedQueryException, RepositoryException, QueryEvaluationException {
-		List<String> result = new LinkedList<>();
-		TupleQuery query = conn.prepareTupleQuery(QueryLanguage.SERQL, CLASS_QUERY);
-		query.setBinding(PARAM_CONTEXT, valueFactory.createURI(context));
-		query.setBinding(PARAM_NAMESPACE, valueFactory.createURI(namespace));
-		TupleQueryResult res = query.evaluate();
-		while (res.hasNext()) {
-			BindingSet row = res.next();
-			result.add(row.getValue("C").stringValue());
-		}
-		res.close();
-
-		return result;
-	}
 
 	public List<String> getAllProperties() throws MalformedQueryException, RepositoryException, QueryEvaluationException {
 		if (propertiesList == null) {
@@ -124,25 +106,6 @@ public class RepositoryWrapper {
 			res.close();
 		}
 		return propertiesList;
-	}
-
-
-	public GraphQueryResult exportInstancesOfType(String context, String type, String labelProperty) throws MalformedQueryException, RepositoryException, QueryEvaluationException {
-		GraphQuery query = conn.prepareGraphQuery(QueryLanguage.SERQL, EXPORT_INSTANCES_OF_TYPE_QUERY);
-		query.setIncludeInferred(false);
-		query.setBinding(PARAM_CONTEXT, valueFactory.createURI(context));
-		query.setBinding(PARAM_LABEL_PROP, valueFactory.createURI(labelProperty));
-		query.setBinding(PARAM_TYPE, valueFactory.createURI(type));
-		return query.evaluate();
-	}
-
-
-	public GraphQueryResult exportInstances(String context, String labelProperty) throws MalformedQueryException, RepositoryException, QueryEvaluationException {
-		GraphQuery query = conn.prepareGraphQuery(QueryLanguage.SERQL, EXPORT_INSTANCES_QUERY);
-		query.setIncludeInferred(false);
-		query.setBinding(PARAM_CONTEXT, valueFactory.createURI(context));
-		query.setBinding(PARAM_LABEL_PROP, valueFactory.createURI(labelProperty));
-		return query.evaluate();
 	}
 
 	public GraphQueryResult executeGraphQuery(String query) throws QueryEvaluationException, MalformedQueryException, RepositoryException {

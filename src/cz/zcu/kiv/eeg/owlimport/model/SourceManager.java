@@ -1,9 +1,7 @@
 package cz.zcu.kiv.eeg.owlimport.model;
 
-import cz.zcu.kiv.eeg.owlimport.RepositoryManager;
 import cz.zcu.kiv.eeg.owlimport.model.sources.AbstractSource;
 import cz.zcu.kiv.eeg.owlimport.model.sources.ISourceFactory;
-import cz.zcu.kiv.eeg.owlimport.model.sources.SourceImportException;
 import cz.zcu.kiv.eeg.owlimport.project.ProjectReadException;
 import cz.zcu.kiv.eeg.owlimport.project.ProjectReader;
 import cz.zcu.kiv.eeg.owlimport.project.ProjectWriteException;
@@ -88,14 +86,6 @@ public class SourceManager {
 		sources = reader.load();
 		if (listener != null && !sources.isEmpty()) {
 			listener.sourcesLoaded(sources.size());
-		}
-	}
-
-	public void importSources(RepositoryManager repositoryManager) throws SourceImportException {
-		for (AbstractSource source : sources) {
-			if (!source.hasRepositoryAttached()) {
-				repositoryManager.importSource(source);
-			}
 		}
 	}
 

@@ -1,6 +1,6 @@
 package cz.zcu.kiv.eeg.owlimport.model.sources.local;
 
-import cz.zcu.kiv.eeg.owlimport.RepositoryWrapper;
+import cz.zcu.kiv.eeg.owlimport.repository.RepositoryWrapper;
 import cz.zcu.kiv.eeg.owlimport.model.sources.AbstractSource;
 import cz.zcu.kiv.eeg.owlimport.model.sources.SourceImportException;
 
@@ -12,8 +12,6 @@ import java.io.File;
  * @author Jan Smitka <jan@smitka.org>
  */
 public class FileSource extends AbstractSource {
-	private static final String EL_FILE = "file";
-
 	private File file;
 
 	public FileSource(String srcTitle, String owlBaseUrl, File localFile) {
@@ -39,7 +37,7 @@ public class FileSource extends AbstractSource {
 
 	@Override
 	public void saveLocation(XMLStreamWriter writer) throws XMLStreamException {
-		writer.writeStartElement(EL_FILE);
+		writer.writeStartElement(FileSourceParams.EL_FILE);
 		writer.writeCharacters(file.getPath());
 		writer.writeEndElement();
 	}

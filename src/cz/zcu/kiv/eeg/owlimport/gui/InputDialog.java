@@ -9,6 +9,11 @@ import java.awt.*;
 public class InputDialog extends JDialog {
 	private DialogResult result = DialogResult.None;
 
+	public void setIcon(String resourceUri) {
+		ImageIcon icon = new ImageIcon(getClass().getResource(resourceUri));
+		setIconImage(icon.getImage());
+	}
+
 
 	protected void setDialogResult(DialogResult dialogResult) {
 		result = dialogResult;

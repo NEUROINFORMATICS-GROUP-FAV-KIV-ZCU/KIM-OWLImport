@@ -5,11 +5,14 @@ import cz.zcu.kiv.eeg.owlimport.model.RuleManager;
 import cz.zcu.kiv.eeg.owlimport.model.SourceManager;
 import cz.zcu.kiv.eeg.owlimport.model.rules.export.*;
 import cz.zcu.kiv.eeg.owlimport.model.sources.local.FileSourceFactory;
+import cz.zcu.kiv.eeg.owlimport.model.sources.remote.UrlSourceFactory;
+import cz.zcu.kiv.eeg.owlimport.repository.RepositoryManager;
+import cz.zcu.kiv.eeg.owlimport.repository.RepositoryManagerException;
 
 /**
  * @author Jan Smitka <jan@smitka.org>
  */
-public class Main {
+public class OWLImport {
 
 
 	public static void main(String[] args) {
@@ -20,7 +23,7 @@ public class Main {
 
 			MainDialog.run(repoManager, srcManager, rlManager);
 		} catch (Exception e) {
-			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+			e.printStackTrace();
 		}
 	}
 
@@ -32,6 +35,7 @@ public class Main {
 	private static SourceManager createSourceManager() {
 		SourceManager srcManager = new SourceManager();
 		srcManager.registerSourceFactory(new FileSourceFactory());
+		srcManager.registerSourceFactory(new UrlSourceFactory());
 		return srcManager;
 	}
 

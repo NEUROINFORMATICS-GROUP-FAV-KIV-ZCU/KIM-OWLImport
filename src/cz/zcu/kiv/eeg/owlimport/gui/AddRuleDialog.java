@@ -38,6 +38,9 @@ public class AddRuleDialog extends InputDialog {
 		setContentPane(contentPane);
 		setModal(true);
 		pack();
+
+		setTitle("Add New Rule");
+		setIcon("icons/add.png");
 	}
 
 	private void registerButtonActions() {

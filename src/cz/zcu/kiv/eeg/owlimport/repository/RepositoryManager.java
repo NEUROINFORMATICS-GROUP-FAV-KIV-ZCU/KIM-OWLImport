@@ -1,4 +1,4 @@
-package cz.zcu.kiv.eeg.owlimport;
+package cz.zcu.kiv.eeg.owlimport.repository;
 
 import cz.zcu.kiv.eeg.owlimport.model.sources.AbstractSource;
 import cz.zcu.kiv.eeg.owlimport.model.sources.SourceImportException;
@@ -92,12 +92,12 @@ public class RepositoryManager {
 		}
 	}
 
-	public RepositoryWrapper createRepository(String name) throws RepositoryManagerException {
+	public RepositoryWrapper createRepository(String id) throws RepositoryManagerException {
 		try {
-			String id = repositoryManager.getNewRepositoryID(name);
-			RepositoryConfig config = createRepositoryConfig(id);
+			String uniqId = repositoryManager.getNewRepositoryID(id);
+			RepositoryConfig config = createRepositoryConfig(uniqId);
 			repositoryManager.addRepositoryConfig(config);
-			RepositoryWrapper wrapper = new RepositoryWrapper(repositoryManager.getRepository(id));
+			RepositoryWrapper wrapper = new RepositoryWrapper(repositoryManager.getRepository(uniqId));
 			createdRepositories.add(wrapper);
 			return wrapper;
 		} catch (RepositoryException e) {
@@ -108,12 +108,12 @@ public class RepositoryManager {
 	}
 
 
-	public RepositoryConfig createRepositoryConfig(String id) throws RepositoryConfigException {
+	private RepositoryConfig createRepositoryConfig(String id) throws RepositoryConfigException {
 		Statement oldId = findRepositoryIdNode();
 		ValueFactory valueFactory = repositoryConfigTemplate.getValueFactory();
 		Statement newId = valueFactory.createStatement(oldId.getSubject(), oldId.getPredicate(),
 				valueFactory.createLiteral(id), oldId.getContext());
-		boolean removed = repositoryConfigTemplate.remove(oldId);
+		repositoryConfigTemplate.remove(oldId);
 		repositoryConfigTemplate.add(newId);
 
 		return RepositoryConfig.create(repositoryConfigTemplate, repositoryNode);
@@ -137,6 +137,15 @@ public class RepositoryManager {
 			source.attachRepository(repository);
 		} catch (RepositoryManagerException e) {
 			throw new SourceImportException("Error while importing sources.", e);
+		}
+	}
+
+
+	public void importSources(List<AbstractSource> sources) throws SourceImportException {
+		for (AbstractSource source : sources) {
+			if (!source.hasRepositoryAttached()) {
+				importSource(source);
+			}
 		}
 	}
 

@@ -1,6 +1,6 @@
 package cz.zcu.kiv.eeg.owlimport.model.sources;
 
-import cz.zcu.kiv.eeg.owlimport.RepositoryWrapper;
+import cz.zcu.kiv.eeg.owlimport.repository.RepositoryWrapper;
 import cz.zcu.kiv.eeg.owlimport.model.rules.AbstractRule;
 
 import javax.xml.stream.XMLStreamException;

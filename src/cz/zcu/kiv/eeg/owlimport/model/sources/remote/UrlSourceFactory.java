@@ -1,7 +1,7 @@
-package cz.zcu.kiv.eeg.owlimport.model.sources.local;
+package cz.zcu.kiv.eeg.owlimport.model.sources.remote;
 
 import cz.zcu.kiv.eeg.owlimport.gui.ISourceParamsComponent;
-import cz.zcu.kiv.eeg.owlimport.gui.sources.FileParamsComponent;
+import cz.zcu.kiv.eeg.owlimport.gui.sources.UrlParamsComponent;
 import cz.zcu.kiv.eeg.owlimport.model.sources.AbstractSource;
 import cz.zcu.kiv.eeg.owlimport.model.sources.ISourceFactory;
 import cz.zcu.kiv.eeg.owlimport.model.sources.ISourceParams;
@@ -12,40 +12,39 @@ import javax.xml.stream.XMLStreamReader;
 /**
  * @author Jan Smitka <jan@smitka.org>
  */
-public class FileSourceFactory implements ISourceFactory {
-	private static final String FACTORY_TITLE = "Local File";
+public class UrlSourceFactory implements ISourceFactory {
+	private static final String FACTORY_TITLE = "Remote URL";
 
 
 	@Override
 	public Class getCreatedClass() {
-		return FileSource.class;
+		return UrlSource.class;
 	}
 
 	@Override
 	public AbstractSource createSource(String title, String baseUrl, ISourceParams parameters) {
-		if (!(parameters instanceof FileSourceParams)) {
+		if (!(parameters instanceof UrlSourceParams)) {
 			throw invalidParametersSetException();
 		}
 
-		FileSourceParams fileParams = (FileSourceParams) parameters;
-		return new FileSource(title, baseUrl, fileParams.getFile());
+		UrlSourceParams urlParams = (UrlSourceParams) parameters;
+		return new UrlSource(title, baseUrl, urlParams.getUrl());
 	}
-
 
 	private IllegalArgumentException invalidParametersSetException() {
-		return new IllegalArgumentException("Specified parameters set is not an instance of FileSourceParams.");
-	}
-
-	@Override
-	public ISourceParamsComponent createGuiComponent() {
-		return new FileParamsComponent();
+		return new IllegalArgumentException("Specified parameters set is not an instance of UrlSourceParams.");
 	}
 
 	@Override
 	public ISourceParams loadParams(XMLStreamReader reader) throws XMLStreamException {
-		FileSourceParams params = new FileSourceParams();
+		UrlSourceParams params = new UrlSourceParams();
 		params.loadXml(reader);
 		return params;
+	}
+
+	@Override
+	public ISourceParamsComponent createGuiComponent() {
+		return new UrlParamsComponent();
 	}
 
 	@Override

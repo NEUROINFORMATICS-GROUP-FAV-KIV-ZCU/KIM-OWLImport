@@ -43,6 +43,7 @@ public class ImportSourceDialog extends InputDialog {
 		pack();
 
 		setTitle("Import Ontology Source");
+		setIcon("icons/add.png");
 	}
 
 

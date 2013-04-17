@@ -2,18 +2,15 @@ package cz.zcu.kiv.eeg.owlimport.gui;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import cz.zcu.kiv.eeg.owlimport.RepositoryManager;
 import cz.zcu.kiv.eeg.owlimport.gui.model.RuleListModel;
 import cz.zcu.kiv.eeg.owlimport.gui.model.SourceListModel;
-import cz.zcu.kiv.eeg.owlimport.model.ExportException;
-import cz.zcu.kiv.eeg.owlimport.model.Exporter;
 import cz.zcu.kiv.eeg.owlimport.model.RuleManager;
 import cz.zcu.kiv.eeg.owlimport.model.SourceManager;
 import cz.zcu.kiv.eeg.owlimport.model.rules.AbstractRule;
 import cz.zcu.kiv.eeg.owlimport.model.sources.AbstractSource;
 import cz.zcu.kiv.eeg.owlimport.model.sources.SourceImportException;
-import cz.zcu.kiv.eeg.owlimport.project.ProjectReadException;
-import cz.zcu.kiv.eeg.owlimport.project.ProjectWriteException;
+import cz.zcu.kiv.eeg.owlimport.project.*;
+import cz.zcu.kiv.eeg.owlimport.repository.RepositoryManager;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -38,6 +35,7 @@ public class MainDialog {
 	private JPanel ruleOptionsPanel;
 	private JButton saveProjectButton;
 	private JButton loadProjectButton;
+	private JButton generateVisiblityButton;
 
 	private RepositoryManager repositoryManager;
 
@@ -149,22 +147,13 @@ public class MainDialog {
 				if (chooser.showSaveDialog($$$getRootComponent$$$()) == JFileChooser.APPROVE_OPTION) {
 					Exporter export = new Exporter(chooser.getSelectedFile());
 					try {
-						export.openFile();
-
-						for (AbstractSource source : sourceManager.getSources()) {
-							export.writeSource(source);
-						}
-
-						export.closeFile();
+						export.writeSources(sourceManager.getSources());
 					} catch (ExportException ex) {
-
+						// TODO: handle error
 					}
 				}
 			}
 		});
-
-
-		//importEEGDatabaseOWL();
 
 
 		saveProjectButton.addActionListener(new ActionListener() {
@@ -177,7 +166,7 @@ public class MainDialog {
 					try {
 						sourceManager.saveProject(chooser.getSelectedFile());
 					} catch (ProjectWriteException ex) {
-						// handle error
+						// TODO: handle error
 					}
 				}
 			}
@@ -191,11 +180,28 @@ public class MainDialog {
 				if (chooser.showOpenDialog($$$getRootComponent$$$()) == JFileChooser.APPROVE_OPTION) {
 					try {
 						sourceManager.loadProject(chooser.getSelectedFile(), ruleManager);
-						sourceManager.importSources(repositoryManager);
+						repositoryManager.importSources(sourceManager.getSources());
 					} catch (ProjectReadException ex) {
-						// handle error
+						// TODO: handle error
 					} catch (SourceImportException ex) {
-						// handle error
+						// TODO: handle error
+					}
+				}
+			}
+		});
+
+		generateVisiblityButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser();
+				chooser.setMultiSelectionEnabled(false);
+
+				if (chooser.showSaveDialog($$$getRootComponent$$$()) == JFileChooser.APPROVE_OPTION) {
+					VisibilityGenerator visibilityGenerator = new VisibilityGenerator(chooser.getSelectedFile());
+					try {
+						visibilityGenerator.generateVisiblity(sourceManager.getSources());
+					} catch (ExportException ex) {
+						// TODO: handle error
 					}
 				}
 			}
@@ -220,7 +226,9 @@ public class MainDialog {
 	public static void run(final RepositoryManager repoManager, final SourceManager srcManager, final RuleManager rlManager) {
 		initLookAndFeel();
 
-		JFrame frame = new JFrame("MainDialog");
+		JFrame frame = new JFrame("KIM-OWLImport");
+		ImageIcon icon = new ImageIcon(MainDialog.class.getResource("icons/kim-owlimport.png"));
+		frame.setIconImage(icon.getImage());
 		frame.setContentPane(new MainDialog(repoManager, srcManager, rlManager).rootPanel);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.pack();
@@ -267,23 +275,29 @@ public class MainDialog {
 		mainToolbar.putClientProperty("JToolBar.isRollover", Boolean.TRUE);
 		rootPanel.add(mainToolbar, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 20), null, 0, false));
 		loadProjectButton = new JButton();
+		loadProjectButton.setIcon(new ImageIcon(getClass().getResource("/cz/zcu/kiv/eeg/owlimport/gui/icons/open.png")));
 		loadProjectButton.setText("Load Project");
 		mainToolbar.add(loadProjectButton);
-		importOWLButton = new JButton();
-		importOWLButton.setText("Import OWL");
-		mainToolbar.add(importOWLButton);
 		final JToolBar.Separator toolBar$Separator1 = new JToolBar.Separator();
 		mainToolbar.add(toolBar$Separator1);
 		exportButton = new JButton();
+		exportButton.setIcon(new ImageIcon(getClass().getResource("/cz/zcu/kiv/eeg/owlimport/gui/icons/export.png")));
 		exportButton.setText("Export");
 		mainToolbar.add(exportButton);
 		final JToolBar.Separator toolBar$Separator2 = new JToolBar.Separator();
 		mainToolbar.add(toolBar$Separator2);
+		generateVisiblityButton = new JButton();
+		generateVisiblityButton.setIcon(new ImageIcon(getClass().getResource("/cz/zcu/kiv/eeg/owlimport/gui/icons/visibility.png")));
+		generateVisiblityButton.setText("Generate Visiblity");
+		mainToolbar.add(generateVisiblityButton);
+		final JToolBar.Separator toolBar$Separator3 = new JToolBar.Separator();
+		mainToolbar.add(toolBar$Separator3);
 		saveProjectButton = new JButton();
+		saveProjectButton.setIcon(new ImageIcon(getClass().getResource("/cz/zcu/kiv/eeg/owlimport/gui/icons/save.png")));
 		saveProjectButton.setText("Save Project");
 		mainToolbar.add(saveProjectButton);
 		final JScrollPane scrollPane1 = new JScrollPane();
-		rootPanel.add(scrollPane1, new GridConstraints(1, 0, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(177, 128), null, 0, false));
+		rootPanel.add(scrollPane1, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(177, 128), null, 0, false));
 		sourceList = new JList();
 		sourceList.setSelectionMode(0);
 		scrollPane1.setViewportView(sourceList);
@@ -299,11 +313,20 @@ public class MainDialog {
 		scrollPane3.setViewportView(ruleOptionsPanel);
 		ruleOptionsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5), null));
 		final JToolBar toolBar1 = new JToolBar();
+		toolBar1.setFloatable(false);
 		rootPanel.add(toolBar1, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 20), null, 0, false));
 		addRuleButton = new JButton();
 		addRuleButton.setEnabled(false);
+		addRuleButton.setIcon(new ImageIcon(getClass().getResource("/cz/zcu/kiv/eeg/owlimport/gui/icons/add.png")));
 		addRuleButton.setText("Add Rule");
 		toolBar1.add(addRuleButton);
+		final JToolBar toolBar2 = new JToolBar();
+		toolBar2.setFloatable(false);
+		rootPanel.add(toolBar2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 20), null, 0, false));
+		importOWLButton = new JButton();
+		importOWLButton.setIcon(new ImageIcon(getClass().getResource("/cz/zcu/kiv/eeg/owlimport/gui/icons/add.png")));
+		importOWLButton.setText("Import OWL");
+		toolBar2.add(importOWLButton);
 	}
 
 	/**

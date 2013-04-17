@@ -1,4 +1,4 @@
-package cz.zcu.kiv.eeg.owlimport;
+package cz.zcu.kiv.eeg.owlimport.repository;
 
 import org.openrdf.model.Graph;
 import org.openrdf.model.Statement;

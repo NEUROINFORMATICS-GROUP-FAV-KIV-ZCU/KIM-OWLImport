@@ -1,4 +1,4 @@
-package cz.zcu.kiv.eeg.owlimport;
+package cz.zcu.kiv.eeg.owlimport.repository;
 
 /**
  * @author Jan Smitka <jan@smitka.org>
