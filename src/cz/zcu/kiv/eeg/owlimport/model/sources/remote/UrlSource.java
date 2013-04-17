@@ -11,18 +11,30 @@ import javax.xml.stream.XMLStreamWriter;
 import java.io.IOException;
 
 /**
+ * Ontology source from remote URL.
  * @author Jan Smitka <jan@smitka.org>
  */
 public class UrlSource extends AbstractSource {
-
+	/** Remote URL. */
 	private final String url;
 
+	/**
+	 * Creates a new source with given ontology URL.
+	 * @param srcTitle Source title.
+	 * @param owlBaseUrl Source base URI.
+	 * @param owlUrl Remote URL.
+	 */
 	public UrlSource(String srcTitle, String owlBaseUrl, String owlUrl) {
 		super(srcTitle, owlBaseUrl);
 
 		url = owlUrl;
 	}
 
+	/**
+	 * Imports the ontology from remote URL to given repository.
+	 * @param repository Repository.
+	 * @throws SourceImportException when the source cannot be imported.
+	 */
 	@Override
 	public void importToRepository(RepositoryWrapper repository) throws SourceImportException {
 		try {
@@ -32,6 +44,11 @@ public class UrlSource extends AbstractSource {
 		}
 	}
 
+	/**
+	 * Saves the remote URL to XML file.
+	 * @param writer XML writer.
+	 * @throws XMLStreamException when the parameters cannot be written.
+	 */
 	@Override
 	public void saveLocation(XMLStreamWriter writer) throws XMLStreamException {
 		writer.writeStartElement(UrlSourceParams.EL_URL);

@@ -8,6 +8,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 /**
+ * Parameters for remote ontology source.
  * @author Jan Smitka <jan@smitka.org>
  */
 public class UrlSourceParams implements ISourceParams {
@@ -33,6 +34,11 @@ public class UrlSourceParams implements ISourceParams {
 		this.url = url;
 	}
 
+	/**
+	 * Loads the parameters from XML file.
+	 * @param reader XML reader
+	 * @throws XMLStreamException when the parameters cannot be loaded.
+	 */
 	@Override
 	public void loadXml(XMLStreamReader reader) throws XMLStreamException {
 		while (reader.nextTag() == XMLStreamConstants.START_ELEMENT) {

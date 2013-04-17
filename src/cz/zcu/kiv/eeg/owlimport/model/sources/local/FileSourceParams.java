@@ -36,6 +36,11 @@ public class FileSourceParams implements ISourceParams {
 	}
 
 
+	/**
+	 * Loads the file path from XML file.
+	 * @param reader XML reader.
+	 * @throws XMLStreamException when the parameters could not be loaded or the XML is malformed.
+	 */
 	@Override
 	public void loadXml(XMLStreamReader reader) throws XMLStreamException {
 		while (reader.nextTag() == XMLStreamConstants.START_ELEMENT) {

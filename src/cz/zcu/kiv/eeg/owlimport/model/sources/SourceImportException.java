@@ -1,6 +1,7 @@
 package cz.zcu.kiv.eeg.owlimport.model.sources;
 
 /**
+ * Source import exception.
  * @author Jan Smitka <jan@smitka.org>
  */
 public class SourceImportException extends Exception {
