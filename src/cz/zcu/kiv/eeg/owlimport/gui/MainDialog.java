@@ -68,7 +68,7 @@ public class MainDialog {
 					try {
 						repositoryManager.importSource(source);
 					} catch (SourceImportException ex) {
-						ex.printStackTrace();
+						handleError(ex);
 					}
 				}
 			}
@@ -149,7 +149,7 @@ public class MainDialog {
 					try {
 						export.writeSources(sourceManager.getSources());
 					} catch (ExportException ex) {
-						// TODO: handle error
+						handleError(ex);
 					}
 				}
 			}
@@ -166,7 +166,7 @@ public class MainDialog {
 					try {
 						sourceManager.saveProject(chooser.getSelectedFile());
 					} catch (ProjectWriteException ex) {
-						// TODO: handle error
+						handleError(ex);
 					}
 				}
 			}
@@ -181,10 +181,8 @@ public class MainDialog {
 					try {
 						sourceManager.loadProject(chooser.getSelectedFile(), ruleManager);
 						repositoryManager.importSources(sourceManager.getSources());
-					} catch (ProjectReadException ex) {
-						// TODO: handle error
-					} catch (SourceImportException ex) {
-						// TODO: handle error
+					} catch (ProjectReadException | SourceImportException ex) {
+						handleError(ex);
 					}
 				}
 			}
@@ -201,11 +199,30 @@ public class MainDialog {
 					try {
 						visibilityGenerator.generateVisiblity(sourceManager.getSources());
 					} catch (ExportException ex) {
-						// TODO: handle error
+						handleError(ex);
 					}
 				}
 			}
 		});
+	}
+
+
+	private void handleError(Exception e) {
+		JOptionPane.showMessageDialog($$$getRootComponent$$$(), formatErrorMessage(e), "Error", JOptionPane.ERROR_MESSAGE);
+	}
+
+
+	private String formatErrorMessage(Exception e) {
+		StringBuilder str = new StringBuilder(e.getMessage());
+		Throwable cause = e.getCause();
+		while (cause != null) {
+			str.append(System.getProperty("line.separator"));
+			str.append("Caused by: ");
+			str.append(cause.getMessage());
+			cause = cause.getCause();
+		}
+
+		return str.toString();
 	}
 
 

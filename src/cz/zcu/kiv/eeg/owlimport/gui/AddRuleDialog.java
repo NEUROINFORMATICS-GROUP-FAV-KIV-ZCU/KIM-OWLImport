@@ -41,6 +41,7 @@ public class AddRuleDialog extends InputDialog {
 
 		setTitle("Add New Rule");
 		setIcon("icons/add.png");
+		setResizable(false);
 	}
 
 	private void registerButtonActions() {
@@ -59,23 +60,6 @@ public class AddRuleDialog extends InputDialog {
 		});
 	}
 
-	private void registerCancelActions() {
-		// call onCancel() when cross is clicked
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				onCancel();
-			}
-		});
-
-		// call onCancel() on ESCAPE
-		contentPane.registerKeyboardAction(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				onCancel();
-			}
-		}, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-	}
-
 
 	private void fillRuleTypeBox() {
 		for (IRuleFactory factory : ruleManager.getFactories()) {
@@ -90,7 +74,8 @@ public class AddRuleDialog extends InputDialog {
 	}
 
 
-	private void onOK() {
+	@Override
+	protected void onOK() {
 		try {
 			validateParams();
 			setDialogResultOk();
@@ -107,10 +92,6 @@ public class AddRuleDialog extends InputDialog {
 		if (ruleTypeBox.getSelectedItem() == null) {
 			throw new ValidationException("You have to select type of rule.", ruleTypeBox);
 		}
-	}
-
-	private void onCancel() {
-		dispose();
 	}
 
 

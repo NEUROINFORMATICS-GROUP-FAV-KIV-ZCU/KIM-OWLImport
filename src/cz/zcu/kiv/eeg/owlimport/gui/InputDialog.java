@@ -2,34 +2,35 @@ package cz.zcu.kiv.eeg.owlimport.gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 
 /**
  * @author Jan Smitka <jan@smitka.org>
  */
-public class InputDialog extends JDialog {
+public abstract class InputDialog extends JDialog {
 	private DialogResult result = DialogResult.None;
 
-	public void setIcon(String resourceUri) {
+	public final void setIcon(String resourceUri) {
 		ImageIcon icon = new ImageIcon(getClass().getResource(resourceUri));
 		setIconImage(icon.getImage());
 	}
 
 
-	protected void setDialogResult(DialogResult dialogResult) {
+	protected final void setDialogResult(DialogResult dialogResult) {
 		result = dialogResult;
 	}
 
 	/**
 	 * Shortcut for successful submission result.
 	 */
-	protected void setDialogResultOk() {
+	protected final void setDialogResultOk() {
 		setDialogResult(DialogResult.OK);
 	}
 
 	/**
 	 * Shortcut for user cancel result.
 	 */
-	protected void setDialogResultCancel() {
+	protected final void setDialogResultCancel() {
 		setDialogResult(DialogResult.Cancel);
 	}
 
@@ -38,8 +39,45 @@ public class InputDialog extends JDialog {
 	 * Gets the dialog operation result.
 	 * @return
 	 */
-	public DialogResult getDialogResult() {
+	public final DialogResult getDialogResult() {
 		return result;
+	}
+
+
+	/**
+	 * Registers keyboard and user-close actions for form disposal.
+	 *
+	 * It has to be called from descendant after the layout has been initialized in order to be used.
+	 */
+	protected void registerCancelActions() {
+		// call onCancel() when cross is clicked
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				onCancel();
+			}
+		});
+
+		// call onCancel() on ESCAPE
+		getRootPane().registerKeyboardAction(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				onCancel();
+			}
+		}, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+	}
+
+
+	/**
+	 * Confirms the input operation. Must be implemented and used in descendants.
+	 */
+	protected abstract void onOK();
+
+
+	/**
+	 * Cancels the input operation and closes the form.
+	 */
+	protected void onCancel() {
+		dispose();
 	}
 
 

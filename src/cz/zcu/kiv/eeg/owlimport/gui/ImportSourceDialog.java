@@ -44,6 +44,7 @@ public class ImportSourceDialog extends InputDialog {
 
 		setTitle("Import Ontology Source");
 		setIcon("icons/add.png");
+		setResizable(false);
 	}
 
 
@@ -61,23 +62,6 @@ public class ImportSourceDialog extends InputDialog {
 				onCancel();
 			}
 		});
-	}
-
-	private void registerCancelActions() {
-		// call onCancel() when cross is clicked
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				onCancel();
-			}
-		});
-
-		// call onCancel() on ESCAPE
-		contentPane.registerKeyboardAction(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				onCancel();
-			}
-		}, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 	}
 
 	private void fillSourceTypeBox() {
@@ -105,7 +89,8 @@ public class ImportSourceDialog extends InputDialog {
 	}
 
 
-	private void onOK() {
+	@Override
+	protected void onOK() {
 		try {
 			validateParams();
 			setDialogResultOk();
@@ -129,11 +114,6 @@ public class ImportSourceDialog extends InputDialog {
 
 	public AbstractSource createSource() {
 		return selectedFactory.createSource(titleField.getText(), baseUrlField.getText(), sourceParams.getParams());
-	}
-
-
-	private void onCancel() {
-		dispose();
 	}
 
 	/**
