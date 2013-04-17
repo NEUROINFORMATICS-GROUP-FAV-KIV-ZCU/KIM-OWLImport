@@ -4,6 +4,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import cz.zcu.kiv.eeg.owlimport.gui.ISourceParamsComponent;
 import cz.zcu.kiv.eeg.owlimport.gui.ValidationException;
+import cz.zcu.kiv.eeg.owlimport.gui.dialog.FileOpenDialog;
 import cz.zcu.kiv.eeg.owlimport.model.sources.local.FileSourceParams;
 import cz.zcu.kiv.eeg.owlimport.model.sources.ISourceParams;
 
@@ -22,11 +23,10 @@ public class FileParamsComponent implements ISourceParamsComponent {
 		browseButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser chooser = new JFileChooser();
-				chooser.setMultiSelectionEnabled(false);
-
-				if (chooser.showOpenDialog(getPanel()) == JFileChooser.APPROVE_OPTION) {
-					pathField.setText(chooser.getSelectedFile().getAbsolutePath());
+				FileOpenDialog dialog = new FileOpenDialog();
+				dialog.addOntologyExtensionFilter();
+				if (dialog.showDialog(getPanel()) == FileOpenDialog.CONFIRM_OPTION) {
+					pathField.setText(dialog.getSelectedFile().getAbsolutePath());
 				}
 			}
 		});

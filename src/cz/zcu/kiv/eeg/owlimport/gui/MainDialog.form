@@ -42,10 +42,6 @@
               <text value="Export"/>
             </properties>
           </component>
-          <component id="9ce77" class="javax.swing.JToolBar$Separator">
-            <constraints/>
-            <properties/>
-          </component>
           <component id="18aaa" class="javax.swing.JButton" binding="generateVisiblityButton" default-binding="true">
             <constraints/>
             <properties>

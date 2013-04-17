@@ -2,6 +2,8 @@ package cz.zcu.kiv.eeg.owlimport.gui;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import cz.zcu.kiv.eeg.owlimport.gui.dialog.FileOpenDialog;
+import cz.zcu.kiv.eeg.owlimport.gui.dialog.FileSaveDialog;
 import cz.zcu.kiv.eeg.owlimport.gui.model.RuleListModel;
 import cz.zcu.kiv.eeg.owlimport.gui.model.SourceListModel;
 import cz.zcu.kiv.eeg.owlimport.model.RuleManager;
@@ -141,11 +143,11 @@ public class MainDialog {
 		exportButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser chooser = new JFileChooser();
-				chooser.setMultiSelectionEnabled(false);
+				FileSaveDialog dialog = new FileSaveDialog("export");
+				dialog.addOntologyExtensionFilter();
 
-				if (chooser.showSaveDialog($$$getRootComponent$$$()) == JFileChooser.APPROVE_OPTION) {
-					Exporter export = new Exporter(chooser.getSelectedFile());
+				if (dialog.showDialog($$$getRootComponent$$$()) == FileSaveDialog.CONFIRM_OPTION) {
+					Exporter export = new Exporter(dialog.getSelectedFile());
 					try {
 						export.writeSources(sourceManager.getSources());
 					} catch (ExportException ex) {
@@ -159,12 +161,12 @@ public class MainDialog {
 		saveProjectButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser chooser = new JFileChooser();
-				chooser.setMultiSelectionEnabled(false);
+				FileSaveDialog dialog = new FileSaveDialog("export");
+				dialog.addExtensionFilter("XML Files", new String[]{"xml"}, true);
 
-				if (chooser.showSaveDialog($$$getRootComponent$$$()) == JFileChooser.APPROVE_OPTION) {
+				if (dialog.showDialog($$$getRootComponent$$$()) == FileSaveDialog.CONFIRM_OPTION) {
 					try {
-						sourceManager.saveProject(chooser.getSelectedFile());
+						sourceManager.saveProject(dialog.getSelectedFile());
 					} catch (ProjectWriteException ex) {
 						handleError(ex);
 					}
@@ -174,12 +176,12 @@ public class MainDialog {
 		loadProjectButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser chooser = new JFileChooser();
-				chooser.setMultiSelectionEnabled(false);
+				FileOpenDialog dialog = new FileOpenDialog("open");
+				dialog.addExtensionFilter("XML Files", new String[]{"xml"}, true);
 
-				if (chooser.showOpenDialog($$$getRootComponent$$$()) == JFileChooser.APPROVE_OPTION) {
+				if (dialog.showDialog($$$getRootComponent$$$()) == FileOpenDialog.CONFIRM_OPTION) {
 					try {
-						sourceManager.loadProject(chooser.getSelectedFile(), ruleManager);
+						sourceManager.loadProject(dialog.getSelectedFile(), ruleManager);
 						repositoryManager.importSources(sourceManager.getSources());
 					} catch (ProjectReadException | SourceImportException ex) {
 						handleError(ex);
@@ -191,11 +193,11 @@ public class MainDialog {
 		generateVisiblityButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser chooser = new JFileChooser();
-				chooser.setMultiSelectionEnabled(false);
+				FileSaveDialog dialog = new FileSaveDialog("save");
+				dialog.addExtensionFilter("N-Triples Files", new String[]{"nt"}, true);
 
-				if (chooser.showSaveDialog($$$getRootComponent$$$()) == JFileChooser.APPROVE_OPTION) {
-					VisibilityGenerator visibilityGenerator = new VisibilityGenerator(chooser.getSelectedFile());
+				if (dialog.showDialog($$$getRootComponent$$$()) == FileSaveDialog.CONFIRM_OPTION) {
+					VisibilityGenerator visibilityGenerator = new VisibilityGenerator(dialog.getSelectedFile());
 					try {
 						visibilityGenerator.generateVisiblity(sourceManager.getSources());
 					} catch (ExportException ex) {
@@ -301,14 +303,12 @@ public class MainDialog {
 		exportButton.setIcon(new ImageIcon(getClass().getResource("/cz/zcu/kiv/eeg/owlimport/gui/icons/export.png")));
 		exportButton.setText("Export");
 		mainToolbar.add(exportButton);
-		final JToolBar.Separator toolBar$Separator2 = new JToolBar.Separator();
-		mainToolbar.add(toolBar$Separator2);
 		generateVisiblityButton = new JButton();
 		generateVisiblityButton.setIcon(new ImageIcon(getClass().getResource("/cz/zcu/kiv/eeg/owlimport/gui/icons/visibility.png")));
 		generateVisiblityButton.setText("Generate Visiblity");
 		mainToolbar.add(generateVisiblityButton);
-		final JToolBar.Separator toolBar$Separator3 = new JToolBar.Separator();
-		mainToolbar.add(toolBar$Separator3);
+		final JToolBar.Separator toolBar$Separator2 = new JToolBar.Separator();
+		mainToolbar.add(toolBar$Separator2);
 		saveProjectButton = new JButton();
 		saveProjectButton.setIcon(new ImageIcon(getClass().getResource("/cz/zcu/kiv/eeg/owlimport/gui/icons/save.png")));
 		saveProjectButton.setText("Save Project");
