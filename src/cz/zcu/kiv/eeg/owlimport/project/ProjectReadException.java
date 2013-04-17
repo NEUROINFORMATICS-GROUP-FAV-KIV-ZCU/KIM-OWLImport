@@ -1,6 +1,7 @@
 package cz.zcu.kiv.eeg.owlimport.project;
 
 /**
+ * Project read exception.
  * @author Jan Smitka <jan@smitka.org>
  */
 public class ProjectReadException extends Exception {

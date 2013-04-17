@@ -1,6 +1,7 @@
 package cz.zcu.kiv.eeg.owlimport.project;
 
 /**
+ * Project write exception.
  * @author Jan Smitka <jan@smitka.org>
  */
 public class ProjectWriteException extends Exception {

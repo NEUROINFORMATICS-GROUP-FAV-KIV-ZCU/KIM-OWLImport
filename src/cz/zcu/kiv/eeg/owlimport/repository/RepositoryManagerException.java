@@ -1,6 +1,7 @@
 package cz.zcu.kiv.eeg.owlimport.repository;
 
 /**
+ * Repository manager exception.
  * @author Jan Smitka <jan@smitka.org>
  */
 public class RepositoryManagerException extends Exception {

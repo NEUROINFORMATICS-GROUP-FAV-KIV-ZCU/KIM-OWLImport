@@ -18,16 +18,26 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * ProjectReader reads the sources and its configuration from given XML file and creates list of sources with rules.
+ *
+ * Uses XMLStream reader for possible embedding of ontology files.
  * @author Jan Smitka <jan@smitka.org>
  */
 public class ProjectReader {
+	/** Source manager used to create sources. */
 	private SourceManager sourceManager;
-
+	/** Rule manager used to create rules. */
 	private RuleManager ruleManager;
-
+	/** Input file. */
 	private File file;
 
-
+	/**
+	 * Initializes new project reader for the given file. Source and Rule managers are used to fetch factories for
+	 * new object creation.
+	 * @param srcManager Source manager.
+	 * @param rlManager Rule manager.
+	 * @param inputFile Input file.
+	 */
 	public ProjectReader(SourceManager srcManager, RuleManager rlManager, File inputFile) {
 		sourceManager = srcManager;
 		ruleManager = rlManager;
@@ -35,6 +45,11 @@ public class ProjectReader {
 	}
 
 
+	/**
+	 * Loads the input file and creates list of sources.
+	 * @return List of sources.
+	 * @throws ProjectReadException when the project cannot be read.
+	 */
 	public List<AbstractSource> load() throws ProjectReadException {
 		List<AbstractSource> sources = new LinkedList<>();
 		try {
@@ -58,20 +73,33 @@ public class ProjectReader {
 	}
 
 
+	/**
+	 * Opens the input file.
+	 * @return Input stream.
+	 * @throws FileNotFoundException when the input file cannot be found.
+	 */
 	private InputStream openFile() throws FileNotFoundException {
 		FileInputStream fs = new FileInputStream(file);
 		BufferedInputStream bfs = new BufferedInputStream(fs);
 		return bfs;
 	}
 
+
+	/** Current source title. */
 	private String sourceTitle;
-
+	/** Current source base URI. */
 	private String sourceBaseUri;
-
+	/** Current source params. */
 	private ISourceParams sourceParams;
-
+	/** Current source rules. */
 	private List<AbstractRule> sourceRules;
 
+	/**
+	 * Loads the source element and creates the new source object.
+	 * @param reader XML reader.
+	 * @return Created source object.
+	 * @throws XMLStreamException when the XML cannot be read or parsed.
+	 */
 	private AbstractSource loadSource(XMLStreamReader reader) throws XMLStreamException {
 		reader.require(XMLStreamConstants.START_ELEMENT, null, Elements.SOURCE);
 		String type = reader.getAttributeValue(null, Attributes.SOURCE_TYPE);
@@ -91,6 +119,12 @@ public class ProjectReader {
 		return source;
 	}
 
+	/**
+	 * Load source child element.
+	 * @param reader XML reader.
+	 * @param factory Source factory.
+	 * @throws XMLStreamException when the XML cannot be read or parsed.
+	 */
 	private void loadSourceMember(XMLStreamReader reader, ISourceFactory factory) throws XMLStreamException {
 		String elName = reader.getLocalName();
 		if (elName.equals(Elements.SOURCE_TITLE)) {
@@ -106,10 +140,16 @@ public class ProjectReader {
 		}
 	}
 
+	/** Title of the currently processed rule. */
 	private String ruleTitle;
-
+	/** Params of the currently processed rule. */
 	private IRuleParams ruleParams;
 
+	/**
+	 * Loads source rules.
+	 * @param reader XML reader.
+	 * @throws XMLStreamException when the XML cannot be read or parsed.
+	 */
 	private void loadSourceRules(XMLStreamReader reader) throws XMLStreamException {
 		while (reader.nextTag() == XMLStreamConstants.START_ELEMENT) {
 			reader.require(XMLStreamConstants.START_ELEMENT, null, Elements.RULE);
@@ -127,6 +167,12 @@ public class ProjectReader {
 		}
 	}
 
+	/**
+	 * Reads the rule child element.
+	 * @param reader XML reader.
+	 * @param factory Rule factory.
+	 * @throws XMLStreamException when the XML cannot be read or parsed.
+	 */
 	private void loadRuleMember(XMLStreamReader reader, IRuleFactory factory) throws XMLStreamException {
 		String elName = reader.getLocalName();
 		if (elName.equals(Elements.RULE_TITLE)) {

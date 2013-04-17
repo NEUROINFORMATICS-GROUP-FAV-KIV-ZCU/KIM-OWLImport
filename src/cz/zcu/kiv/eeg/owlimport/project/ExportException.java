@@ -1,6 +1,7 @@
 package cz.zcu.kiv.eeg.owlimport.project;
 
 /**
+ * Generic export exception.
  * @author Jan Smitka <jan@smitka.org>
  */
 public class ExportException extends Exception {

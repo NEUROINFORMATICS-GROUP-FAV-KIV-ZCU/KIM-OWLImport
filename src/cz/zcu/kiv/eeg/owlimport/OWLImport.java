@@ -10,11 +10,17 @@ import cz.zcu.kiv.eeg.owlimport.repository.RepositoryManager;
 import cz.zcu.kiv.eeg.owlimport.repository.RepositoryManagerException;
 
 /**
+ * Main application.
  * @author Jan Smitka <jan@smitka.org>
  */
 public class OWLImport {
-
-
+	/**
+	 * Application entry-point.
+	 *
+	 * Initializes the repositories and managers and runs the GUI.
+	 *
+	 * @param args Command-line arguments.
+	 */
 	public static void main(String[] args) {
 		try {
 			RepositoryManager repoManager = createRepositoryManager();
@@ -28,10 +34,20 @@ public class OWLImport {
 	}
 
 
+	/**
+	 * Creates the repository manager.
+	 * @return New repository manager.
+	 * @throws RepositoryManagerException when the repository manager could not be initialized.
+	 */
 	private static RepositoryManager createRepositoryManager() throws RepositoryManagerException {
 		return new RepositoryManager();
 	}
 
+
+	/**
+	 * Creates the ontology source manager.
+	 * @return New source manager.
+	 */
 	private static SourceManager createSourceManager() {
 		SourceManager srcManager = new SourceManager();
 		srcManager.registerSourceFactory(new FileSourceFactory());
@@ -39,6 +55,11 @@ public class OWLImport {
 		return srcManager;
 	}
 
+
+	/**
+	 * Creates the export/transformation rule manager.
+	 * @return New rule manager.
+	 */
 	private static RuleManager createRuleManager() {
 		RuleManager rlManager = new RuleManager();
 		rlManager.registerFactory(new ExportTitleRuleFactory());
