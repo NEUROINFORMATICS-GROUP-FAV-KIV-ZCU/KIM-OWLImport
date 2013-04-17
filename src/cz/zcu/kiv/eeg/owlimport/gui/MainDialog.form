@@ -135,6 +135,14 @@
               <text value="Add Rule"/>
             </properties>
           </component>
+          <component id="72f15" class="javax.swing.JButton" binding="removeRuleButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <enabled value="false"/>
+              <icon value="cz/zcu/kiv/eeg/owlimport/gui/icons/remove.png"/>
+              <text value="Remove Rule"/>
+            </properties>
+          </component>
         </children>
       </toolbar>
       <toolbar id="29203">

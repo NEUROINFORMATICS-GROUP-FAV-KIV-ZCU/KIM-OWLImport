@@ -21,7 +21,12 @@ public class RuleListModel extends AbstractListModel<AbstractRule> {
 		source.setRulesListener(new AbstractSource.RuleListListener() {
 			@Override
 			public void ruleAdded(AbstractRule rule, int index) {
-				fireIntervalAdded(rule, index, index);
+				fireIntervalAdded(RuleListModel.this, index, index);
+			}
+
+			@Override
+			public void ruleRemoved(int index) {
+				fireIntervalRemoved(RuleListModel.this, index, index);
 			}
 		});
 	}

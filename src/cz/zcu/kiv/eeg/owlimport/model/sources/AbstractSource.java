@@ -73,6 +73,21 @@ public abstract class AbstractSource {
 		}
 	}
 
+	public final void removeRule(int index) {
+		rules.remove(index);
+		if (rulesListener != null) {
+			rulesListener.ruleRemoved(index);
+		}
+	}
+
+
+	public final void removeRule(AbstractRule rule) {
+		int index = rules.indexOf(rule);
+		if (index >= 0) {
+			removeRule(index);
+		}
+	}
+
 
 	public final int getRulesCount() {
 		return rules.size();
@@ -98,5 +113,7 @@ public abstract class AbstractSource {
 
 	public interface RuleListListener {
 		public void ruleAdded(AbstractRule rule, int index);
+
+		public void ruleRemoved(int index);
 	}
 }

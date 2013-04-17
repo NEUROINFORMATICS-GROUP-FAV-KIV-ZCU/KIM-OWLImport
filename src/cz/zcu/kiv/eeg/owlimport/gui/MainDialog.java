@@ -38,6 +38,7 @@ public class MainDialog {
 	private JButton saveProjectButton;
 	private JButton loadProjectButton;
 	private JButton generateVisiblityButton;
+	private JButton removeRuleButton;
 
 	private RepositoryManager repositoryManager;
 
@@ -50,6 +51,8 @@ public class MainDialog {
 	private AbstractSource selectedSource;
 
 	private RuleListModel rulesModel;
+
+	private AbstractRule selectedRule;
 
 	public MainDialog(RepositoryManager repoManager, SourceManager srcManager, RuleManager rlManager) {
 		sourceManager = srcManager;
@@ -120,9 +123,9 @@ public class MainDialog {
 			public void selectionSelected(int selectedIndex, ListSelectionEvent e) {
 				ruleOptionsPanel.removeAll();
 
-				AbstractRule rule = rulesModel.getElementAt(selectedIndex);
-				IRuleParamsComponent opt = rule.getGuiComponent();
-				JLabel title = new JLabel(rule.getTitle());
+				selectedRule = rulesModel.getElementAt(selectedIndex);
+				IRuleParamsComponent opt = selectedRule.getGuiComponent();
+				JLabel title = new JLabel(selectedRule.getTitle());
 				title.setBorder(new EmptyBorder(0, 0, 10, 0));
 				ruleOptionsPanel.add(title, BorderLayout.NORTH);
 				ruleOptionsPanel.add(opt.getPanel(), BorderLayout.CENTER);
@@ -130,6 +133,8 @@ public class MainDialog {
 				ruleOptionsPanel.revalidate();
 				getFrame().pack();
 				getFrame().repaint();
+
+				removeRuleButton.setEnabled(true);
 			}
 
 			@Override
@@ -137,6 +142,9 @@ public class MainDialog {
 				ruleOptionsPanel.removeAll();
 				ruleOptionsPanel.revalidate();
 				getFrame().repaint();
+
+				selectedRule = null;
+				removeRuleButton.setEnabled(false);
 			}
 		});
 
@@ -203,6 +211,15 @@ public class MainDialog {
 					} catch (ExportException ex) {
 						handleError(ex);
 					}
+				}
+			}
+		});
+
+		removeRuleButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (selectedRule != null) {
+					selectedSource.removeRule(selectedRule);
 				}
 			}
 		});
@@ -337,6 +354,11 @@ public class MainDialog {
 		addRuleButton.setIcon(new ImageIcon(getClass().getResource("/cz/zcu/kiv/eeg/owlimport/gui/icons/add.png")));
 		addRuleButton.setText("Add Rule");
 		toolBar1.add(addRuleButton);
+		removeRuleButton = new JButton();
+		removeRuleButton.setEnabled(false);
+		removeRuleButton.setIcon(new ImageIcon(getClass().getResource("/cz/zcu/kiv/eeg/owlimport/gui/icons/remove.png")));
+		removeRuleButton.setText("Remove Rule");
+		toolBar1.add(removeRuleButton);
 		final JToolBar toolBar2 = new JToolBar();
 		toolBar2.setFloatable(false);
 		rootPanel.add(toolBar2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 20), null, 0, false));
