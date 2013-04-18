@@ -14,11 +14,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+/**
+ * GUI component that allows user to browse local filesystem for file with ontology.
+ * @author Jan Smitka <jan@smitka.org>
+ */
 public class FileParamsComponent implements ISourceParamsComponent {
 	private JPanel contentPane;
 	private JTextField pathField;
 	private JButton browseButton;
 
+	/**
+	 * Initializes the component.
+	 */
 	public FileParamsComponent() {
 		browseButton.addActionListener(new ActionListener() {
 			@Override
@@ -33,6 +40,10 @@ public class FileParamsComponent implements ISourceParamsComponent {
 	}
 
 
+	/**
+	 * Validates if the selected file exists and is readable.
+	 * @throws ValidationException when the validation fails.
+	 */
 	@Override
 	public void validate() throws ValidationException {
 		if (pathField.getText().length() == 0) {
@@ -47,11 +58,19 @@ public class FileParamsComponent implements ISourceParamsComponent {
 		}
 	}
 
+	/**
+	 * Gets component root panel.
+	 * @return Panel.
+	 */
 	@Override
 	public JComponent getPanel() {
 		return $$$getRootComponent$$$();
 	}
 
+	/**
+	 * Creates the parameters from user data.
+	 * @return New {@code FileSourceParams} instance.
+	 */
 	@Override
 	public ISourceParams getParams() {
 		FileSourceParams params = new FileSourceParams();

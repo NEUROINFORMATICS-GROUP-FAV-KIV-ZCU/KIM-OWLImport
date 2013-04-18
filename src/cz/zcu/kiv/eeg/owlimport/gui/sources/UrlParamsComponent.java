@@ -11,12 +11,17 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
+ * GUI component which allows user to enter URI of remote ontology.
  * @author Jan Smitka <jan@smitka.org>
  */
 public class UrlParamsComponent implements ISourceParamsComponent {
 	private JTextField urlField;
 	private JPanel contentPane;
 
+	/**
+	 * Validates if the URL has been entered. Does not validate the URL format.
+	 * @throws ValidationException when the validation fails.
+	 */
 	@Override
 	public void validate() throws ValidationException {
 		if (urlField.getText().length() == 0) {
@@ -24,11 +29,19 @@ public class UrlParamsComponent implements ISourceParamsComponent {
 		}
 	}
 
+	/**
+	 * Gets the component root panel.
+	 * @return Panel.
+	 */
 	@Override
 	public JComponent getPanel() {
 		return $$$getRootComponent$$$();
 	}
 
+	/**
+	 * Creates the parameters for URL source from user data.
+	 * @return New {@code UrlSourceParams} instance.
+	 */
 	@Override
 	public ISourceParams getParams() {
 		UrlSourceParams params = new UrlSourceParams();
