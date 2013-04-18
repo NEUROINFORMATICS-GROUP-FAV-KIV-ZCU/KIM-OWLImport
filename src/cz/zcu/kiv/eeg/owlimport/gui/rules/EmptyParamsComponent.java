@@ -4,7 +4,6 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import cz.zcu.kiv.eeg.owlimport.gui.IRuleParamsComponent;
-import cz.zcu.kiv.eeg.owlimport.gui.ValidationException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,15 +14,6 @@ import java.awt.*;
  */
 public class EmptyParamsComponent implements IRuleParamsComponent {
 	private JPanel rootPanel;
-
-	/**
-	 * Does not perform any validation.
-	 * @throws ValidationException never thrown.
-	 */
-	@Override
-	public void validate() throws ValidationException {
-		// nothing to validate
-	}
 
 	/**
 	 * Gets the component panel.

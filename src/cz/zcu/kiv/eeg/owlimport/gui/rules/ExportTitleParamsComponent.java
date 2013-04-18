@@ -3,10 +3,9 @@ package cz.zcu.kiv.eeg.owlimport.gui.rules;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import cz.zcu.kiv.eeg.owlimport.repository.RepositoryWrapper;
 import cz.zcu.kiv.eeg.owlimport.gui.IRuleParamsComponent;
-import cz.zcu.kiv.eeg.owlimport.gui.ValidationException;
 import cz.zcu.kiv.eeg.owlimport.model.rules.export.ExportTitleParams;
+import cz.zcu.kiv.eeg.owlimport.repository.RepositoryWrapper;
 
 import javax.swing.*;
 import java.awt.*;
@@ -66,15 +65,6 @@ public class ExportTitleParamsComponent implements IRuleParamsComponent {
 		} else {
 			ruleParams.setLabelProp((String) titleUriBox.getSelectedItem());
 		}
-	}
-
-	/**
-	 * Does not perform any validation.
-	 * @throws ValidationException
-	 */
-	@Override
-	public void validate() throws ValidationException {
-
 	}
 
 	/**
