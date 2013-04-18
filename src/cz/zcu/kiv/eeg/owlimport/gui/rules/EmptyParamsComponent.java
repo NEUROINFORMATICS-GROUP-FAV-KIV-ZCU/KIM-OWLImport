@@ -10,21 +10,33 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
+ * GUI component informing user that the rule has no parameters.
  * @author Jan Smitka <jan@smitka.org>
  */
 public class EmptyParamsComponent implements IRuleParamsComponent {
 	private JPanel rootPanel;
 
+	/**
+	 * Does not perform any validation.
+	 * @throws ValidationException never thrown.
+	 */
 	@Override
 	public void validate() throws ValidationException {
 		// nothing to validate
 	}
 
+	/**
+	 * Gets the component panel.
+	 * @return Panel.
+	 */
 	@Override
 	public JComponent getPanel() {
 		return $$$getRootComponent$$$();
 	}
 
+	/**
+	 * Does not refresh values of any component.
+	 */
 	@Override
 	public void refresh() {
 		// nothing to refresh

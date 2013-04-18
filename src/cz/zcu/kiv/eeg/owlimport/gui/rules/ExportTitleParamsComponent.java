@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
+ * GUI component which allows user to specify property URI to be used as entity title..
  * @author Jan Smitka <jan@smitka.org>
  */
 public class ExportTitleParamsComponent implements IRuleParamsComponent {
@@ -22,6 +23,11 @@ public class ExportTitleParamsComponent implements IRuleParamsComponent {
 
 	private ExportTitleParams ruleParams;
 
+	/**
+	 * Initializes the component for editing specified rule parameters.
+	 * @param params Rule parameters.
+	 * @param repository Repository from which the property URIs will be selected.
+	 */
 	public ExportTitleParamsComponent(ExportTitleParams params, RepositoryWrapper repository) {
 		$$$setupUI$$$();
 
@@ -29,6 +35,10 @@ public class ExportTitleParamsComponent implements IRuleParamsComponent {
 		initTitleUriBox(repository);
 	}
 
+	/**
+	 * Populates the title URI combobox with URIs from the repository.
+	 * @param repository Repository.
+	 */
 	private void initTitleUriBox(RepositoryWrapper repository) {
 		try {
 			for (String property : repository.getAllProperties()) {
@@ -47,6 +57,9 @@ public class ExportTitleParamsComponent implements IRuleParamsComponent {
 	}
 
 
+	/**
+	 * Refreshes the combo box value.
+	 */
 	public void refresh() {
 		if (ruleParams.getLabelProp() != null) {
 			titleUriBox.setSelectedItem(ruleParams.getLabelProp());
@@ -55,12 +68,19 @@ public class ExportTitleParamsComponent implements IRuleParamsComponent {
 		}
 	}
 
-
+	/**
+	 * Does not perform any validation.
+	 * @throws ValidationException
+	 */
 	@Override
 	public void validate() throws ValidationException {
 
 	}
 
+	/**
+	 * Gets the component root panel.
+	 * @return Panel.
+	 */
 	@Override
 	public JComponent getPanel() {
 		return $$$getRootComponent$$$();

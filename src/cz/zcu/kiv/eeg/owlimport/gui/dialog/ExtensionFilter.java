@@ -21,12 +21,22 @@ public class ExtensionFilter extends FileFilter {
 	private final Set<String> extensionList;
 
 
+	/**
+	 * Creates a new filter with given title, filtering specified extensions.
+	 * @param filterTitle Title of filter.
+	 * @param extensions List of allowed extensions. Extensions has to be in lowercase.
+	 */
 	public ExtensionFilter(String filterTitle, String[] extensions) {
 		title = filterTitle;
 		extensionList = new HashSet<>();
 		Collections.addAll(extensionList, extensions);
 	}
 
+	/**
+	 * Checks if the given file is a directory or a file with corresponding extension.
+	 * @param f File.
+	 * @return {@code true} if the file matches the conditions.
+	 */
 	@Override
 	public boolean accept(File f) {
 		if (f.isDirectory()) {
@@ -42,6 +52,10 @@ public class ExtensionFilter extends FileFilter {
 		}
 	}
 
+	/**
+	 * Formats the filter label - joins title and list of extensions.
+	 * @return Label.
+	 */
 	@Override
 	public String getDescription() {
 		StringBuilder str = new StringBuilder(title);
@@ -65,10 +79,19 @@ public class ExtensionFilter extends FileFilter {
 	}
 
 
+	/**
+	 * Checks if the filter filters only one extension.
+	 * @return {@code true} if the filter has only one extension specified.
+	 */
 	public boolean hasSingleExtension() {
 		return extensionList.size() == 1;
 	}
 
+	/**
+	 * Gets the first extension of the filter. Intended only for filters with single extension as the first extension
+	 * in hash set cannot be predicted unless there is only one item.
+	 * @return
+	 */
 	public String getSingleExtension() {
 		String ext = null;
 		Iterator<String> itr = extensionList.iterator();
@@ -79,6 +102,12 @@ public class ExtensionFilter extends FileFilter {
 	}
 
 
+	/**
+	 * If the specified file has no extension and this filter contains only one extension, appends the filter's extension
+	 * to original filename and returns a new instance of file. Otherwise the file is kept intact and returned.
+	 * @param file File metadata.
+	 * @return File with fixed filename.
+	 */
 	public File fixFileExtension(File file) {
 		if (hasSingleExtension() && getExtension(file) == null) {
 			String ext = getSingleExtension();
@@ -89,6 +118,11 @@ public class ExtensionFilter extends FileFilter {
 	}
 
 
+	/**
+	 * Extracts the file extension.
+	 * @param file File.
+	 * @return File extension or {@code null} if the extension cannot be determined.
+	 */
 	private String getExtension(File file) {
 		String name = file.getName();
 		String ext = null;
