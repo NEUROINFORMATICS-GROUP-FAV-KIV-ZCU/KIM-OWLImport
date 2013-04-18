@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * TrustedSourceRule generates trusted source and generatedBy statements for all entities in the ontology.
+ *
  * @author Jan Smitka <jan@smitka.org>
  */
 public class TrustedSourceRule extends AbstractEmptyParamsRule {
@@ -32,10 +34,20 @@ public class TrustedSourceRule extends AbstractEmptyParamsRule {
 
 	private static final String SOURCE_URI_PARAM = "_sourceUri";
 
+	/**
+	 * Initializes a new rule with given title.
+	 * @param ruleTitle Rule title.
+	 */
 	public TrustedSourceRule(String ruleTitle) {
 		super(ruleTitle);
 	}
 
+	/**
+	 * Generates a trusted source definition statement and executes CONSTRUCT query which creates generatedBy statements
+	 * for all entities in the ontology.
+	 * @return Union iteration of trusted source and generatedBy statements.
+	 * @throws RuleExportException when the entities could not be exported.
+	 */
 	@Override
 	public Iteration<Statement, ? extends Exception> getStatements() throws RuleExportException {
 		GraphImpl graph = new GraphImpl();
@@ -60,13 +72,21 @@ public class TrustedSourceRule extends AbstractEmptyParamsRule {
 		return new UnionIteration<Statement, QueryEvaluationException>(sourceDef, entities);
 	}
 
-
+	/**
+	 * Normalizes rule title for use in URI - removes accents and replaces non-alphanumeric characters with hyphens.
+	 * @param title Rule title.
+	 * @return Normalized rule title.
+	 */
 	private String createUriPart(String title) {
 		String noAccents = removeAccents(title);
 		return noAccents.replaceAll("[^A-Za-z0-9_\\.-]", "-").replaceAll("-{2,}", "-");
 	}
 
-
+	/**
+	 * Removes accents from string.
+	 * @param str String.
+	 * @return String without accents.
+	 */
 	private String removeAccents(String str) {
 		return Normalizer.normalize(str, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
 	}

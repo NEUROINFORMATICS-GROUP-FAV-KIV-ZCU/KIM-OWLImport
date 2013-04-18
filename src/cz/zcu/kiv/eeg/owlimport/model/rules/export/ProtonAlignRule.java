@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * {@code ProtonAlignRule} aligns the ontology to PROTON Ontology Top Module.
  * @author Jan Smitka <jan@smitka.org>
  */
 public class ProtonAlignRule extends AbstractEmptyParamsRule {
@@ -23,11 +24,20 @@ public class ProtonAlignRule extends AbstractEmptyParamsRule {
 
 	private static final String PROTON_OBJECT_URI = "http://proton.semanticweb.org/2006/05/protont#Object";
 
-
+	/**
+	 * Initializes a new rule with given title.
+	 * @param ruleTitle Rule title.
+	 */
 	public ProtonAlignRule(String ruleTitle) {
 		super(ruleTitle);
 	}
 
+	/**
+	 * Creates subclass of protont:Object statements for all classes which don't have any defined super class.
+	 * These classes are class hierarchy roots, so the whole ontology will be aligned to PROTON Ontology Top Module.
+	 * @return Iteration of subclass definition statements.
+	 * @throws RuleExportException when the query execution fails.
+	 */
 	@Override
 	public GraphQueryResult getStatements() throws RuleExportException {
 		try {

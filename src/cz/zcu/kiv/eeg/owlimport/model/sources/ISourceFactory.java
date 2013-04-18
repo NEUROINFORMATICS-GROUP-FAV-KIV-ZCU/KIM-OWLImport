@@ -14,7 +14,7 @@ import javax.xml.stream.XMLStreamReader;
 public interface ISourceFactory {
 	/**
 	 * Returns the class of sources created by the factory.
-	 * @return Class instance.
+	 * @return Class metadata.
 	 */
 	public Class getCreatedClass();
 

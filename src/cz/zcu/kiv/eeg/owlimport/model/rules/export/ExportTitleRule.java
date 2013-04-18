@@ -13,6 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Exports all instances with specified property and uses the property value as entity label.
+ *
+ * This rule is intended as an example of ontology transformation.
  * @author Jan Smitka <jan@smitka.org>
  */
 public class ExportTitleRule extends AbstractRule {
@@ -21,25 +24,46 @@ public class ExportTitleRule extends AbstractRule {
 
 	private ExportTitleParams params;
 
+	/**
+	 * Initializes a new rule with given title and empty parameters.
+	 * @param ruleTitle Rule title.
+	 */
 	public ExportTitleRule(String ruleTitle) {
 		super(ruleTitle, new ExportTitleParams());
 	}
 
+	/**
+	 * Sets the rule parameters.
+	 * @param ruleParams {@code ExportTitleParams} instance.
+	 */
 	@Override
 	public void setRuleParams(IRuleParams ruleParams) {
 		params = (ExportTitleParams) ruleParams;
 	}
 
+	/**
+	 * Gets the rule parameters.
+	 * @return Current {@code ExportTitleParams} instance.
+	 */
 	@Override
 	public IRuleParams getRuleParams() {
 		return params;
 	}
 
+	/**
+	 * Creates a GUI panel which allows user to specify which datatype property will be used as the entity label.
+	 * @return GUI component.
+	 */
 	@Override
 	public IRuleParamsComponent createGuiComponent() {
 		return new ExportTitleParamsComponent(params, getRepository());
 	}
 
+	/**
+	 * Exports entity titles from specified property.
+	 * @return Iteration of entity title statements.
+	 * @throws RuleExportException when the query execution fails.
+	 */
 	@Override
 	public GraphQueryResult getStatements() throws RuleExportException {
 		try {

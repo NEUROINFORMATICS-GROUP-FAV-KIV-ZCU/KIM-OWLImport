@@ -1,6 +1,7 @@
 package cz.zcu.kiv.eeg.owlimport.model.rules;
 
 /**
+ * Rule exporting exception.
  * @author Jan Smitka <jan@smitka.org>
  */
 public class RuleExportException extends Exception {

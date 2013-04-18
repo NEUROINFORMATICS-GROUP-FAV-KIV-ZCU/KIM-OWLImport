@@ -7,6 +7,7 @@ import info.aduna.iteration.Iteration;
 import org.openrdf.model.Statement;
 
 /**
+ * ExportInstancesRule exports definition of all instances defined in the ontology.
  * @author Jan Smitka <jan@smitka.org>
  */
 public class ExportInstancesRule extends AbstractEmptyParamsRule {
@@ -15,10 +16,19 @@ public class ExportInstancesRule extends AbstractEmptyParamsRule {
 				"FROM {Entity} rdf:type {Type}; Property {Value}, {Type} sesame:directType {ClassType}" +
 				"WHERE ClassType = owl:Class";
 
+	/**
+	 * Initializes a new rule with given title.
+	 * @param ruleTitle Rule title.
+	 */
 	public ExportInstancesRule(String ruleTitle) {
 		super(ruleTitle);
 	}
 
+	/**
+	 * Exports definition of all instances from ontology.
+	 * @return Iteration of instance definition statements.
+	 * @throws RuleExportException when the query execution fails.
+	 */
 	@Override
 	public Iteration<Statement, ? extends Exception> getStatements() throws RuleExportException {
 		try {
