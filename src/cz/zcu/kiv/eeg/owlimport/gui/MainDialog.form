@@ -42,11 +42,11 @@
               <text value="Export"/>
             </properties>
           </component>
-          <component id="18aaa" class="javax.swing.JButton" binding="generateVisiblityButton" default-binding="true">
+          <component id="18aaa" class="javax.swing.JButton" binding="generateVisibilityButton">
             <constraints/>
             <properties>
               <icon value="cz/zcu/kiv/eeg/owlimport/gui/icons/visibility.png"/>
-              <text value="Generate Visiblity"/>
+              <text value="Generate Visibility"/>
             </properties>
           </component>
           <component id="7c4" class="javax.swing.JToolBar$Separator">

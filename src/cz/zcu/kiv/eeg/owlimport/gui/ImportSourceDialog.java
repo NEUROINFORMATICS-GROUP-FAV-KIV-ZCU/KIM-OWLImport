@@ -11,6 +11,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * Dialog for ontology import.
+ * @author Jan Smitka <jan@smitka.org>
+ */
 public class ImportSourceDialog extends InputDialog {
 	private JPanel contentPane;
 	private JButton buttonOK;
@@ -25,6 +29,10 @@ public class ImportSourceDialog extends InputDialog {
 	private ISourceFactory selectedFactory = null;
 	private ISourceParamsComponent sourceParams;
 
+	/**
+	 * Initializes the dialog.
+	 * @param manager Source manager.
+	 */
 	public ImportSourceDialog(SourceManager manager) {
 		$$$setupUI$$$();
 		initializeLayout();
@@ -37,6 +45,9 @@ public class ImportSourceDialog extends InputDialog {
 		fillSourceTypeBox();
 	}
 
+	/**
+	 * Initializes dialog window layout.
+	 */
 	private void initializeLayout() {
 		setContentPane(contentPane);
 		setModal(true);
@@ -47,7 +58,9 @@ public class ImportSourceDialog extends InputDialog {
 		setResizable(false);
 	}
 
-
+	/**
+	 * Registers OK and Cancel button actions.
+	 */
 	private void registerButtonActions() {
 		getRootPane().setDefaultButton(buttonOK);
 
@@ -64,6 +77,9 @@ public class ImportSourceDialog extends InputDialog {
 		});
 	}
 
+	/**
+	 * Fills the source type combo box with available factories.
+	 */
 	private void fillSourceTypeBox() {
 		sourceTypeBox.addActionListener(new ActionListener() {
 			@Override
@@ -82,13 +98,21 @@ public class ImportSourceDialog extends InputDialog {
 		}
 	}
 
+	/**
+	 * Creates the parameters panel for selected factory type.
+	 * @param factory Source factory.
+	 */
 	private void createParamsPanel(ISourceFactory factory) {
 		sourceParams = factory.createGuiComponent();
 		sourceParamsPanel.add(sourceParams.getPanel());
 		pack();
+		revalidate();
+		repaint();
 	}
 
-
+	/**
+	 * Validates the parameters and closes the dialog.
+	 */
 	@Override
 	protected void onOK() {
 		try {
@@ -100,6 +124,10 @@ public class ImportSourceDialog extends InputDialog {
 		}
 	}
 
+	/**
+	 * Validates user entered parameters.
+	 * @throws ValidationException when the validation fails.
+	 */
 	private void validateParams() throws ValidationException {
 		if (titleField.getText().length() == 0) {
 			throw new ValidationException("You have to enter sources title.", titleField);
@@ -111,7 +139,10 @@ public class ImportSourceDialog extends InputDialog {
 		sourceParams.validate();
 	}
 
-
+	/**
+	 * Creates the ontology source.
+	 * @return New ontology source.
+	 */
 	public AbstractSource createSource() {
 		return selectedFactory.createSource(titleField.getText(), baseUrlField.getText(), sourceParams.getParams());
 	}

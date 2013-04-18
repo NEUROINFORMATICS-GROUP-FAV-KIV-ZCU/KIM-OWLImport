@@ -24,6 +24,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 /**
+ * Main window of the program.
  * @author Jan Smitka <jan@smitka.org>
  */
 public class MainDialog {
@@ -37,7 +38,7 @@ public class MainDialog {
 	private JPanel ruleOptionsPanel;
 	private JButton saveProjectButton;
 	private JButton loadProjectButton;
-	private JButton generateVisiblityButton;
+	private JButton generateVisibilityButton;
 	private JButton removeRuleButton;
 
 	private RepositoryManager repositoryManager;
@@ -54,6 +55,12 @@ public class MainDialog {
 
 	private AbstractRule selectedRule;
 
+	/**
+	 * Initializes the window.
+	 * @param repoManager Repository manager.
+	 * @param srcManager Source manager.
+	 * @param rlManager Rule manager.
+	 */
 	public MainDialog(RepositoryManager repoManager, SourceManager srcManager, RuleManager rlManager) {
 		sourceManager = srcManager;
 		repositoryManager = repoManager;
@@ -61,59 +68,49 @@ public class MainDialog {
 
 		initSourceList();
 
+		initializeSourceComponentsListeners();
+		initializeRuleComponentsListeners();
+		initializeProjectButtonsListeners();
+	}
+
+	/**
+	 * Initializes the listeners for ontology source management components.
+	 */
+	private void initializeSourceComponentsListeners() {
 		importOWLButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ImportSourceDialog dialog = new ImportSourceDialog(MainDialog.this.sourceManager);
-				dialog.showInCenterOf($$$getRootComponent$$$());
-
-				if (dialog.getDialogResult() == DialogResult.OK) {
-					AbstractSource source = dialog.createSource();
-					sourceManager.addSource(source);
-					try {
-						repositoryManager.importSource(source);
-					} catch (SourceImportException ex) {
-						handleError(ex);
-					}
-				}
+				importSource();
 			}
 		});
 		sourceList.addListSelectionListener(new ListSingleSelectionAdapter(sourceList) {
 			@Override
-			public void selectionChanged(ListSelectionEvent e) {
-				if (rulesModel != null) {
-					rulesModel.detach();
-				}
-			}
-
-			@Override
 			public void selectionSelected(int selectedIndex, ListSelectionEvent e) {
-				selectedSource = sourcesModel.getElementAt(selectedIndex);
-				rulesModel = new RuleListModel(selectedSource);
-				setRuleListModel(rulesModel);
+				refreshRuleList(selectedIndex);
 			}
 
 			@Override
 			public void selectionCanceled(ListSelectionEvent e) {
-				selectedSource = null;
-				setRuleListModel(null);
+				clearRuleList();
 			}
 		});
+	}
 
+	/**
+	 * Initializes listeners for rule management components.
+	 */
+	private void initializeRuleComponentsListeners() {
 		addRuleButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (selectedSource == null) {
-					return;
-				}
+				addRule();
+			}
+		});
 
-				AddRuleDialog dialog = new AddRuleDialog(ruleManager);
-				dialog.showInCenterOf($$$getRootComponent$$$());
-
-				if (dialog.getDialogResult() == DialogResult.OK) {
-					AbstractRule rule = dialog.createRule();
-					selectedSource.addRule(rule);
-				}
+		removeRuleButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				removeSelectedRule();
 			}
 		});
 
@@ -121,47 +118,24 @@ public class MainDialog {
 		ruleList.addListSelectionListener(new ListSingleSelectionAdapter(ruleList) {
 			@Override
 			public void selectionSelected(int selectedIndex, ListSelectionEvent e) {
-				ruleOptionsPanel.removeAll();
-
-				selectedRule = rulesModel.getElementAt(selectedIndex);
-				IRuleParamsComponent opt = selectedRule.getGuiComponent();
-				JLabel title = new JLabel(selectedRule.getTitle());
-				title.setBorder(new EmptyBorder(0, 0, 10, 0));
-				ruleOptionsPanel.add(title, BorderLayout.NORTH);
-				ruleOptionsPanel.add(opt.getPanel(), BorderLayout.CENTER);
-				opt.refresh();
-				ruleOptionsPanel.revalidate();
-				getFrame().pack();
-				getFrame().repaint();
-
-				removeRuleButton.setEnabled(true);
+				createRuleOptionsPanel(selectedIndex);
 			}
 
 			@Override
 			public void selectionCanceled(ListSelectionEvent e) {
-				ruleOptionsPanel.removeAll();
-				ruleOptionsPanel.revalidate();
-				getFrame().repaint();
-
-				selectedRule = null;
-				removeRuleButton.setEnabled(false);
+				removeRuleOptionsPanel();
 			}
 		});
+	}
 
+	/**
+	 * Initializes listeners for project management buttons.
+	 */
+	private void initializeProjectButtonsListeners() {
 		exportButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				FileSaveDialog dialog = new FileSaveDialog("export");
-				dialog.addOntologyExtensionFilter();
-
-				if (dialog.showDialog($$$getRootComponent$$$()) == FileSaveDialog.CONFIRM_OPTION) {
-					Exporter export = new Exporter(dialog.getSelectedFile());
-					try {
-						export.writeSources(sourceManager.getSources());
-					} catch (ExportException ex) {
-						handleError(ex);
-					}
-				}
+				exportSources();
 			}
 		});
 
@@ -169,68 +143,205 @@ public class MainDialog {
 		saveProjectButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				FileSaveDialog dialog = new FileSaveDialog("export");
-				dialog.addExtensionFilter("XML Files", new String[]{"xml"}, true);
-
-				if (dialog.showDialog($$$getRootComponent$$$()) == FileSaveDialog.CONFIRM_OPTION) {
-					try {
-						sourceManager.saveProject(dialog.getSelectedFile());
-					} catch (ProjectWriteException ex) {
-						handleError(ex);
-					}
-				}
+				saveProject();
 			}
 		});
+
 		loadProjectButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				FileOpenDialog dialog = new FileOpenDialog("open");
-				dialog.addExtensionFilter("XML Files", new String[]{"xml"}, true);
-
-				if (dialog.showDialog($$$getRootComponent$$$()) == FileOpenDialog.CONFIRM_OPTION) {
-					try {
-						sourceManager.loadProject(dialog.getSelectedFile(), ruleManager);
-						repositoryManager.importSources(sourceManager.getSources());
-					} catch (ProjectReadException | SourceImportException ex) {
-						handleError(ex);
-					}
-				}
+				loadProject();
 			}
 		});
 
-		generateVisiblityButton.addActionListener(new ActionListener() {
+		generateVisibilityButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				FileSaveDialog dialog = new FileSaveDialog("save");
-				dialog.addExtensionFilter("N-Triples Files", new String[]{"nt"}, true);
-
-				if (dialog.showDialog($$$getRootComponent$$$()) == FileSaveDialog.CONFIRM_OPTION) {
-					VisibilityGenerator visibilityGenerator = new VisibilityGenerator(dialog.getSelectedFile());
-					try {
-						visibilityGenerator.generateVisiblity(sourceManager.getSources());
-					} catch (ExportException ex) {
-						handleError(ex);
-					}
-				}
-			}
-		});
-
-		removeRuleButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (selectedRule != null) {
-					selectedSource.removeRule(selectedRule);
-				}
+				generateVisibility();
 			}
 		});
 	}
 
+	/**
+	 * Shows import source dialog and imports the source to repository.
+	 */
+	private void importSource() {
+		ImportSourceDialog dialog = new ImportSourceDialog(this.sourceManager);
+		dialog.showInCenterOf($$$getRootComponent$$$());
 
+		if (dialog.getDialogResult() == DialogResult.OK) {
+			AbstractSource source = dialog.createSource();
+			sourceManager.addSource(source);
+			try {
+				repositoryManager.importSource(source);
+			} catch (SourceImportException ex) {
+				handleError(ex);
+			}
+		}
+	}
+
+	/**
+	 * Clears the rule list.
+	 */
+	private void clearRuleList() {
+		selectedSource = null;
+		setRuleListModel(null);
+	}
+
+	/**
+	 * Populates the rule list from currently selected source.
+	 * @param selectedIndex Selected index.
+	 */
+	private void refreshRuleList(int selectedIndex) {
+		if (rulesModel != null) {
+			rulesModel.detach();
+		}
+
+		selectedSource = sourcesModel.getElementAt(selectedIndex);
+		rulesModel = new RuleListModel(selectedSource);
+		setRuleListModel(rulesModel);
+	}
+
+	/**
+	 * Shows add rule dialog and adds the new rule to the currently selected source.
+	 */
+	private void addRule() {
+		if (selectedSource == null) {
+			return;
+		}
+
+		AddRuleDialog dialog = new AddRuleDialog(ruleManager);
+		dialog.showInCenterOf($$$getRootComponent$$$());
+
+		if (dialog.getDialogResult() == DialogResult.OK) {
+			AbstractRule rule = dialog.createRule();
+			selectedSource.addRule(rule);
+		}
+	}
+
+
+	/**
+	 * Creates rule options panel for rule at specified index.
+	 * @param selectedIndex Selected index.
+	 */
+	private void createRuleOptionsPanel(int selectedIndex) {
+		ruleOptionsPanel.removeAll();
+
+		selectedRule = rulesModel.getElementAt(selectedIndex);
+		IRuleParamsComponent opt = selectedRule.getGuiComponent();
+		JLabel title = new JLabel(selectedRule.getTitle());
+		title.setBorder(new EmptyBorder(0, 0, 10, 0));
+		ruleOptionsPanel.add(title, BorderLayout.NORTH);
+		ruleOptionsPanel.add(opt.getPanel(), BorderLayout.CENTER);
+		opt.refresh();
+		ruleOptionsPanel.revalidate();
+		getFrame().pack();
+		getFrame().repaint();
+
+		removeRuleButton.setEnabled(true);
+	}
+
+	/**
+	 * Removes the rule options panel.
+	 */
+	private void removeRuleOptionsPanel() {
+		ruleOptionsPanel.removeAll();
+		ruleOptionsPanel.revalidate();
+		getFrame().repaint();
+
+		selectedRule = null;
+		removeRuleButton.setEnabled(false);
+	}
+
+	/**
+	 * Exports currently defined sources and their rules.
+	 */
+	private void exportSources() {
+		FileSaveDialog dialog = new FileSaveDialog("export");
+		dialog.addExtensionFilter("Turtle Files", new String[]{"ttl"}, true);
+
+		if (dialog.showDialog($$$getRootComponent$$$()) == FileSaveDialog.CONFIRM_OPTION) {
+			Exporter export = new Exporter(dialog.getSelectedFile());
+			try {
+				export.writeSources(sourceManager.getSources());
+			} catch (ExportException ex) {
+				handleError(ex);
+			}
+		}
+	}
+
+	/**
+	 * Saves project.
+	 */
+	private void saveProject() {
+		FileSaveDialog dialog = new FileSaveDialog("export");
+		dialog.addExtensionFilter("XML Files", new String[]{"xml"}, true);
+
+		if (dialog.showDialog($$$getRootComponent$$$()) == FileSaveDialog.CONFIRM_OPTION) {
+			try {
+				sourceManager.saveProject(dialog.getSelectedFile());
+			} catch (ProjectWriteException ex) {
+				handleError(ex);
+			}
+		}
+	}
+
+	/**
+	 * Loads previously saved projects.
+	 */
+	private void loadProject() {
+		FileOpenDialog dialog = new FileOpenDialog("open");
+		dialog.addExtensionFilter("XML Files", new String[]{"xml"}, true);
+
+		if (dialog.showDialog($$$getRootComponent$$$()) == FileOpenDialog.CONFIRM_OPTION) {
+			try {
+				sourceManager.loadProject(dialog.getSelectedFile(), ruleManager);
+				repositoryManager.importSources(sourceManager.getSources());
+			} catch (ProjectReadException | SourceImportException ex) {
+				handleError(ex);
+			}
+		}
+	}
+
+	/**
+	 * Asks user for file path and generates visibility file.
+	 */
+	private void generateVisibility() {
+		FileSaveDialog dialog = new FileSaveDialog("save");
+		dialog.addExtensionFilter("N-Triples Files", new String[]{"nt"}, true);
+
+		if (dialog.showDialog($$$getRootComponent$$$()) == FileSaveDialog.CONFIRM_OPTION) {
+			VisibilityGenerator visibilityGenerator = new VisibilityGenerator(dialog.getSelectedFile());
+			try {
+				visibilityGenerator.generateVisibility(sourceManager.getSources());
+			} catch (ExportException ex) {
+				handleError(ex);
+			}
+		}
+	}
+
+	/**
+	 * Removes the currently selected rule.
+	 */
+	private void removeSelectedRule() {
+		if (selectedRule != null) {
+			selectedSource.removeRule(selectedRule);
+		}
+	}
+
+	/**
+	 * Handles error and shows an error message to user.
+	 * @param e Exception.
+	 */
 	private void handleError(Exception e) {
 		JOptionPane.showMessageDialog($$$getRootComponent$$$(), formatErrorMessage(e), "Error", JOptionPane.ERROR_MESSAGE);
 	}
 
-
+	/**
+	 * Formats the exception message.
+	 * @param e Exception.
+	 * @return String containing exception message and messages of all exception causes.
+	 */
 	private String formatErrorMessage(Exception e) {
 		StringBuilder str = new StringBuilder(e.getMessage());
 		Throwable cause = e.getCause();
@@ -244,21 +355,38 @@ public class MainDialog {
 		return str.toString();
 	}
 
-
+	/**
+	 * Gets the window frame.
+	 * @return Window frame.
+	 */
 	private JFrame getFrame() {
 		return (JFrame) rootPanel.getTopLevelAncestor();
 	}
 
+	/**
+	 * Sets the rule list model and enables/disables addRuleButton and removeRuleButton.
+	 * @param model
+	 */
 	private void setRuleListModel(ListModel<AbstractRule> model) {
 		ruleList.setModel(model);
 		addRuleButton.setEnabled(model != null);
+		removeRuleButton.setEnabled(model != null);
 	}
 
+	/**
+	 * Initializes the source list.
+	 */
 	private void initSourceList() {
 		sourcesModel = new SourceListModel(sourceManager);
 		sourceList.setModel(sourcesModel);
 	}
 
+	/**
+	 * Runs the application.
+	 * @param repoManager Repository manager.
+	 * @param srcManager Source manager.
+	 * @param rlManager Rule manager.
+	 */
 	public static void run(final RepositoryManager repoManager, final SourceManager srcManager, final RuleManager rlManager) {
 		initLookAndFeel();
 
@@ -278,6 +406,9 @@ public class MainDialog {
 		});
 	}
 
+	/**
+	 * Initializes the application system look and feel.
+	 */
 	private static void initLookAndFeel() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -320,10 +451,10 @@ public class MainDialog {
 		exportButton.setIcon(new ImageIcon(getClass().getResource("/cz/zcu/kiv/eeg/owlimport/gui/icons/export.png")));
 		exportButton.setText("Export");
 		mainToolbar.add(exportButton);
-		generateVisiblityButton = new JButton();
-		generateVisiblityButton.setIcon(new ImageIcon(getClass().getResource("/cz/zcu/kiv/eeg/owlimport/gui/icons/visibility.png")));
-		generateVisiblityButton.setText("Generate Visiblity");
-		mainToolbar.add(generateVisiblityButton);
+		generateVisibilityButton = new JButton();
+		generateVisibilityButton.setIcon(new ImageIcon(getClass().getResource("/cz/zcu/kiv/eeg/owlimport/gui/icons/visibility.png")));
+		generateVisibilityButton.setText("Generate Visiblity");
+		mainToolbar.add(generateVisibilityButton);
 		final JToolBar.Separator toolBar$Separator2 = new JToolBar.Separator();
 		mainToolbar.add(toolBar$Separator2);
 		saveProjectButton = new JButton();

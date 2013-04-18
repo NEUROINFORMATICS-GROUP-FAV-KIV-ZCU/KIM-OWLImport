@@ -11,6 +11,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * Dialog for new rule creation.
+ * @author Jan Smitka <jan@smitka.org>
+ */
 public class AddRuleDialog extends InputDialog {
 	private JPanel contentPane;
 	private JButton buttonOK;
@@ -20,6 +24,11 @@ public class AddRuleDialog extends InputDialog {
 
 	private RuleManager ruleManager;
 
+
+	/**
+	 * Initializes the dialog.
+	 * @param rlManager Rule manager with available rule factories.
+	 */
 	public AddRuleDialog(RuleManager rlManager) {
 		$$$setupUI$$$();
 
@@ -33,7 +42,9 @@ public class AddRuleDialog extends InputDialog {
 		fillRuleTypeBox();
 	}
 
-
+	/**
+	 * Initializes the dialog layout.
+	 */
 	private void initializeLayout() {
 		setContentPane(contentPane);
 		setModal(true);
@@ -44,6 +55,9 @@ public class AddRuleDialog extends InputDialog {
 		setResizable(false);
 	}
 
+	/**
+	 * Registers OK and Cancel button actions.
+	 */
 	private void registerButtonActions() {
 		getRootPane().setDefaultButton(buttonOK);
 
@@ -60,20 +74,28 @@ public class AddRuleDialog extends InputDialog {
 		});
 	}
 
-
+	/**
+	 * Populates the rule type combo box with available factories.
+	 */
 	private void fillRuleTypeBox() {
 		for (IRuleFactory factory : ruleManager.getFactories()) {
 			ruleTypeBox.addItem(factory);
 		}
 	}
 
-
+	/**
+	 * Creates the rule.
+	 * @return Newly created rule.
+	 */
 	public AbstractRule createRule() {
 		IRuleFactory factory = (IRuleFactory) ruleTypeBox.getSelectedItem();
 		return factory.createRule(titleField.getText());
 	}
 
 
+	/**
+	 * Validates parameters and closes the dialog.
+	 */
 	@Override
 	protected void onOK() {
 		try {
@@ -85,6 +107,10 @@ public class AddRuleDialog extends InputDialog {
 		}
 	}
 
+	/**
+	 * Validates rule parameters.
+	 * @throws ValidationException when the validation fails.
+	 */
 	private void validateParams() throws ValidationException {
 		if (titleField.getText().length() == 0) {
 			throw new ValidationException("You have to enter rule title.", titleField);

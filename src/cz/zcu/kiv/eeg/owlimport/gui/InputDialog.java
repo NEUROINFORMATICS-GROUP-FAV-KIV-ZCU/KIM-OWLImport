@@ -5,17 +5,25 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
+ * Abstract class for input dialogs.
  * @author Jan Smitka <jan@smitka.org>
  */
 public abstract class InputDialog extends JDialog {
 	private DialogResult result = DialogResult.None;
 
+	/**
+	 * Sets the dialog window icon from resource.
+	 * @param resourceUri URI of the resource. The URI has to be either absolute or relative to the dialog class.
+	 */
 	public final void setIcon(String resourceUri) {
 		ImageIcon icon = new ImageIcon(getClass().getResource(resourceUri));
 		setIconImage(icon.getImage());
 	}
 
-
+	/**
+	 * Sets the dialog result.
+	 * @param dialogResult New dialog result.
+	 */
 	protected final void setDialogResult(DialogResult dialogResult) {
 		result = dialogResult;
 	}
@@ -37,7 +45,7 @@ public abstract class InputDialog extends JDialog {
 
 	/**
 	 * Gets the dialog operation result.
-	 * @return
+	 * @return Dialog result.
 	 */
 	public final DialogResult getDialogResult() {
 		return result;
@@ -91,6 +99,10 @@ public abstract class InputDialog extends JDialog {
 	}
 
 
+	/**
+	 * Handles the validation exception - shows error message and requests focus for the invalid control.
+	 * @param e Validation exception.
+	 */
 	protected void handleValidationException(ValidationException e) {
 		if (e.hasInvalidComponent()) {
 			e.getInvalidComponent().requestFocusInWindow();
