@@ -14,7 +14,6 @@ import org.openrdf.repository.config.RepositoryConfig;
 import org.openrdf.repository.config.RepositoryConfigException;
 import org.openrdf.repository.manager.LocalRepositoryManager;
 import org.openrdf.rio.*;
-import sun.plugin.dom.exception.InvalidStateException;
 
 import java.io.File;
 import java.io.IOException;
@@ -124,7 +123,7 @@ public class RepositoryManager {
 		if (iterator.hasNext()) {
 			return iterator.next();
 		} else {
-			throw new InvalidStateException("Repository ID cannot be found in template.");
+			throw new IllegalStateException("Repository ID cannot be found in template.");
 		}
 	}
 
