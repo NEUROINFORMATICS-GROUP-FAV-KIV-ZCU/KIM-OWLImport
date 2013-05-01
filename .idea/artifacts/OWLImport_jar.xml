@@ -1,0 +1,24 @@
+<component name="ArtifactManager">
+  <artifact name="OWLImport:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/OWLImport_jar</output-path>
+    <root id="root">
+      <element id="archive" name="OWLImport.jar">
+        <element id="module-output" name="OWLImport" />
+      </element>
+      <element id="directory" name="libs">
+        <element id="file-copy" path="$PROJECT_DIR$/lib/commons-codec-1.4.jar" />
+        <element id="file-copy" path="$PROJECT_DIR$/lib/commons-httpclient-3.1.jar" />
+        <element id="file-copy" path="$PROJECT_DIR$/lib/commons-logging-1.1.1.jar" />
+        <element id="file-copy" path="$PROJECT_DIR$/lib/forms_rt.jar" />
+        <element id="file-copy" path="$PROJECT_DIR$/lib/log4j-1.2.6.jar" />
+        <element id="file-copy" path="$PROJECT_DIR$/lib/lubm.jar" />
+        <element id="file-copy" path="$PROJECT_DIR$/lib/openrdf-sesame-2.6.10-onejar.jar" />
+        <element id="file-copy" path="$PROJECT_DIR$/lib/owlim-lite-5.3.jar" />
+        <element id="file-copy" path="$PROJECT_DIR$/lib/sesame-http-client-2.6.10.jar" />
+        <element id="file-copy" path="$PROJECT_DIR$/lib/slf4j-api-1.5.0.jar" />
+        <element id="file-copy" path="$PROJECT_DIR$/lib/slf4j-jdk14-1.5.0.jar" />
+      </element>
+      <element id="file-copy" path="$PROJECT_DIR$/logback.xml" />
+    </root>
+  </artifact>
+</component>
