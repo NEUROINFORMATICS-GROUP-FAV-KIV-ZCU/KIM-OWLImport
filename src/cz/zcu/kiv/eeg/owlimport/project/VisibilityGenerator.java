@@ -24,8 +24,8 @@ public class VisibilityGenerator {
 	/**
 	 * Query to export visiblity rules.
 	 */
-	private static final String EXPORT_VISIBLITY_QUERY = "CONSTRUCT {Class} <http://www.ontotext.com/kim/2006/05/kimso#visibilityLevel1> {\"\"} " +
-			"FROM CONTEXT _context {Class} sesame:directType {ClassType} WHERE ClassType = owl:Class";
+	private static final String EXPORT_VISIBLITY_QUERY = "CONSTRUCT DISTINCT {Class} <http://www.ontotext.com/kim/2006/05/kimso#visibilityLevel1> {\"\"} " +
+			"FROM {Class} rdf:type {ClassType} WHERE ClassType = owl:Class OR ClassType = owl:ObjectProperty OR ClassType = owl:DatatypeProperty";
 
 	/** Output file. */
 	private File outputFile;

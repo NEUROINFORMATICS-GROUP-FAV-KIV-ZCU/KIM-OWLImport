@@ -63,6 +63,8 @@ public class ProjectReader {
 				sources.add(loadSource(reader));
 			}
 
+			reader.require(XMLStreamConstants.END_ELEMENT, null, Elements.SOURCES);
+
 			in.close();
 			return sources;
 		} catch (IOException e) {
@@ -115,6 +117,9 @@ public class ProjectReader {
 		for (AbstractRule rule : sourceRules) {
 			source.addRule(rule);
 		}
+
+		reader.nextTag();
+		reader.require(XMLStreamConstants.END_ELEMENT, null, Elements.SOURCE);
 
 		return source;
 	}

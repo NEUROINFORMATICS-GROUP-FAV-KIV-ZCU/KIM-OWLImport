@@ -25,6 +25,7 @@ import java.awt.event.WindowEvent;
 
 /**
  * Main window of the program.
+ *
  * @author Jan Smitka <jan@smitka.org>
  */
 public class MainDialog {
@@ -57,9 +58,10 @@ public class MainDialog {
 
 	/**
 	 * Initializes the window.
+	 *
 	 * @param repoManager Repository manager.
-	 * @param srcManager Source manager.
-	 * @param rlManager Rule manager.
+	 * @param srcManager  Source manager.
+	 * @param rlManager   Rule manager.
 	 */
 	public MainDialog(RepositoryManager repoManager, SourceManager srcManager, RuleManager rlManager) {
 		sourceManager = srcManager;
@@ -190,6 +192,7 @@ public class MainDialog {
 
 	/**
 	 * Populates the rule list from currently selected source.
+	 *
 	 * @param selectedIndex Selected index.
 	 */
 	private void refreshRuleList(int selectedIndex) {
@@ -222,6 +225,7 @@ public class MainDialog {
 
 	/**
 	 * Creates rule options panel for rule at specified index.
+	 *
 	 * @param selectedIndex Selected index.
 	 */
 	private void createRuleOptionsPanel(int selectedIndex) {
@@ -331,6 +335,7 @@ public class MainDialog {
 
 	/**
 	 * Handles error and shows an error message to user.
+	 *
 	 * @param e Exception.
 	 */
 	private void handleError(Exception e) {
@@ -339,6 +344,7 @@ public class MainDialog {
 
 	/**
 	 * Formats the exception message.
+	 *
 	 * @param e Exception.
 	 * @return String containing exception message and messages of all exception causes.
 	 */
@@ -357,6 +363,7 @@ public class MainDialog {
 
 	/**
 	 * Gets the window frame.
+	 *
 	 * @return Window frame.
 	 */
 	private JFrame getFrame() {
@@ -365,6 +372,7 @@ public class MainDialog {
 
 	/**
 	 * Sets the rule list model and enables/disables addRuleButton and removeRuleButton.
+	 *
 	 * @param model
 	 */
 	private void setRuleListModel(ListModel<AbstractRule> model) {
@@ -383,9 +391,10 @@ public class MainDialog {
 
 	/**
 	 * Runs the application.
+	 *
 	 * @param repoManager Repository manager.
-	 * @param srcManager Source manager.
-	 * @param rlManager Rule manager.
+	 * @param srcManager  Source manager.
+	 * @param rlManager   Rule manager.
 	 */
 	public static void run(final RepositoryManager repoManager, final SourceManager srcManager, final RuleManager rlManager) {
 		initLookAndFeel();
@@ -453,7 +462,7 @@ public class MainDialog {
 		mainToolbar.add(exportButton);
 		generateVisibilityButton = new JButton();
 		generateVisibilityButton.setIcon(new ImageIcon(getClass().getResource("/cz/zcu/kiv/eeg/owlimport/gui/icons/visibility.png")));
-		generateVisibilityButton.setText("Generate Visiblity");
+		generateVisibilityButton.setText("Generate Visibility");
 		mainToolbar.add(generateVisibilityButton);
 		final JToolBar.Separator toolBar$Separator2 = new JToolBar.Separator();
 		mainToolbar.add(toolBar$Separator2);

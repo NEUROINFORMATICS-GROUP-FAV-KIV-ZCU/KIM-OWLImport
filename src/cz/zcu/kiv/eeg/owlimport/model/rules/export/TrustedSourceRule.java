@@ -28,7 +28,7 @@ public class TrustedSourceRule extends AbstractEmptyParamsRule {
 	private static final String SOURCE_BASE_URI = "http://kiv.zcu.cz/eeg/KIM/sources";
 
 	private static final String ENTITIES_QUERY =
-			"CONSTRUCT {Entity} <http://proton.semanticweb.org/2006/05/protons#generatedBy> {_sourceUri} " +
+			"CONSTRUCT DISTINCT {Entity} <http://proton.semanticweb.org/2006/05/protons#generatedBy> {_sourceUri} " +
 			"FROM {Entity} rdf:type {Type}, {Type} sesame:directType {ClassType}" +
 			"WHERE ClassType = owl:Class";
 
@@ -60,7 +60,7 @@ public class TrustedSourceRule extends AbstractEmptyParamsRule {
 
 		RepositoryWrapper repository = getRepository();
 		Map<String, Value> queryParams = new HashMap<String, Value>();
-		queryParams.put(SOURCE_URI_PARAM, repository.createLiteral(sourceUri));
+		queryParams.put(SOURCE_URI_PARAM, repository.createUri(sourceUri));
 
 		Iteration<Statement, QueryEvaluationException> entities;
 		try {

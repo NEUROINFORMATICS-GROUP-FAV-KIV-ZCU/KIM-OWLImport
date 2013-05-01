@@ -17,6 +17,9 @@ public class XmlReaderUtils {
 	 */
 	public static String loadElementText(XMLStreamReader reader) throws XMLStreamException {
 		reader.next();
+		if (reader.isEndElement()) {
+			return "";
+		}
 		reader.require(XMLStreamConstants.CHARACTERS, null, null);
 		String text = reader.getText();
 		reader.next();
