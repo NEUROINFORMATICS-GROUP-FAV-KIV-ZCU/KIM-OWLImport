@@ -17,7 +17,7 @@ import java.awt.event.ActionListener;
  * @author Jan Smitka <jan@smitka.org>
  */
 public class ImportSourceDialog extends InputDialog {
-	private static final String URI_EXPR = "^http://.";
+	private static final String URI_EXPR = "^http://.+$";
 
 	private JPanel contentPane;
 	private JButton buttonOK;
