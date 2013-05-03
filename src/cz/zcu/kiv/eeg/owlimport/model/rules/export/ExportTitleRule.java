@@ -66,6 +66,10 @@ public class ExportTitleRule extends AbstractRule {
 	 */
 	@Override
 	public GraphQueryResult getStatements() throws RuleExportException {
+		if (params.getLabelProp() == null) {
+			return null;
+		}
+
 		try {
 			RepositoryWrapper repository = getRepository();
 			Map<String, Value> queryParams = new HashMap<String, Value>();

@@ -108,7 +108,10 @@ public class Exporter {
 	 * @throws RDFHandlerException
 	 */
 	private void writeRule(AbstractRule rule) throws RuleExportException, RDFHandlerException {
-		writeStatements(rule.getStatements());
+		Iteration<Statement, ? extends Exception> statements = rule.getStatements();
+		if (statements != null) {
+			writeStatements(statements);
+		}
 	}
 
 
