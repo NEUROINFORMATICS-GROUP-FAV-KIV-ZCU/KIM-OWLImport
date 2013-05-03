@@ -118,9 +118,6 @@ public class ProjectReader {
 			source.addRule(rule);
 		}
 
-		reader.nextTag();
-		reader.require(XMLStreamConstants.END_ELEMENT, null, Elements.SOURCE);
-
 		return source;
 	}
 

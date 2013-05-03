@@ -1,5 +1,6 @@
 package cz.zcu.kiv.eeg.owlimport.model.rules;
 
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -17,6 +18,9 @@ public abstract class AbstractEmptyParamsRuleFactory implements IRuleFactory {
 	 */
 	@Override
 	public IRuleParams loadParams(XMLStreamReader reader) throws XMLStreamException {
+		reader.nextTag();
+		reader.require(XMLStreamConstants.END_ELEMENT, null, null);
+
 		return new EmptyRuleParams();
 	}
 }
