@@ -173,9 +173,9 @@ public class MainDialog {
 
 		if (dialog.getDialogResult() == DialogResult.OK) {
 			AbstractSource source = dialog.createSource();
-			sourceManager.addSource(source);
 			try {
 				repositoryManager.importSource(source);
+				sourceManager.addSource(source);
 			} catch (SourceImportException ex) {
 				handleError(ex);
 			}
@@ -376,7 +376,11 @@ public class MainDialog {
 	 * @param model
 	 */
 	private void setRuleListModel(ListModel<AbstractRule> model) {
-		ruleList.setModel(model);
+		if (model == null) {
+			ruleList.setModel(new DefaultListModel());
+		} else {
+			ruleList.setModel(model);
+		}
 		addRuleButton.setEnabled(model != null);
 		removeRuleButton.setEnabled(model != null);
 	}

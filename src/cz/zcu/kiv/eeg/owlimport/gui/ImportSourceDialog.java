@@ -9,13 +9,16 @@ import cz.zcu.kiv.eeg.owlimport.model.sources.ISourceFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Dialog for ontology import.
  * @author Jan Smitka <jan@smitka.org>
  */
 public class ImportSourceDialog extends InputDialog {
+	private static final String URI_EXPR = "^http://.";
+
 	private JPanel contentPane;
 	private JButton buttonOK;
 	private JButton buttonCancel;
@@ -134,6 +137,9 @@ public class ImportSourceDialog extends InputDialog {
 		}
 		if (baseUrlField.getText().length() == 0) {
 			throw new ValidationException("You have to enter Base URL, it is required for correct repository setup.", baseUrlField);
+		}
+		if (!baseUrlField.getText().matches(URI_EXPR)) {
+			throw new ValidationException("You have to enter an absolute Base URL beginning with http://.", baseUrlField);
 		}
 
 		sourceParams.validate();
