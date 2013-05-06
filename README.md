@@ -12,6 +12,13 @@ The tool can be compiled using the Apache Ant:
     ant -f owlimport.xml
 
 
+Running
+-------
+
+The JAR can be run directly from command-line (reqires graphical interface). It has to be located in
+a user-writable folder.
+
+
 License
 -------
 
