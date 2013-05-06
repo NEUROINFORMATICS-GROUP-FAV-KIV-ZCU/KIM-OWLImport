@@ -4,6 +4,13 @@ KIM-OWLIMport
 KIM-OWLIMport is an ontology transformation tool. It's main purpose is to transform and ammend OWL ontology
 for semantic annotation in KIM Platform.
 
+Compiling
+---------
+
+The tool can be compiled using the Apache Ant:
+
+    ant -f owlimport.xml
+
 
 License
 -------
