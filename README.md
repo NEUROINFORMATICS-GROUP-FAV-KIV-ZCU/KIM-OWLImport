@@ -24,6 +24,8 @@ License
 
 This software is relased under the Apache License 2.0. For details, see LICENSE.md.
 
+This software uses OWLIM-Lite, Copyright (C) 2000-2014 Ontotext AD. All rights reserved.
+
 For licenses for the third-party libraries, please see the license files in the lib/ folder.
 
 This software uses [Farm-Fresh Web Icons](http://www.fatcow.com/free-icons) from FatCow Web Hosting.
