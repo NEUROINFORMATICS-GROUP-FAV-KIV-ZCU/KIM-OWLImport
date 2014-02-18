@@ -22,7 +22,7 @@ a user-writable folder.
 License
 -------
 
-This software is relased under the MIT License. For details, see LICENSE.md.
+This software is relased under the Apache License 2.0. For details, see LICENSE.md.
 
 For licenses for the third-party libraries, please see the license files in the lib/ folder.
 
