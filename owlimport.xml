@@ -183,6 +183,7 @@
     <copy file="${basedir}/lib/slf4j-api-1.5.0.jar" tofile="${artifact.output.owlimport:jar}/libs/slf4j-api-1.5.0.jar"/>
     <copy file="${basedir}/lib/slf4j-jdk14-1.5.0.jar" tofile="${artifact.output.owlimport:jar}/libs/slf4j-jdk14-1.5.0.jar"/>
     <copy file="${basedir}/logback.xml" tofile="${artifact.output.owlimport:jar}/logback.xml"/>
+    <copy file="${basedir}/README.md" tofile="${artifact.output.owlimport:jar}/README.md"/>
   </target>
   
   <target name="build.all.artifacts" depends="artifact.owlimport:jar" description="Build all artifacts">
